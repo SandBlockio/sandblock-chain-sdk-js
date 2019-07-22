@@ -2,7 +2,7 @@
   "name": "sandblock-chain-sdk",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "cross-env NODE_ENV=test jest",
     "test:ledger": "qunit --require babel-polyfill tests-ledger/tests.js",
