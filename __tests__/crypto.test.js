@@ -32,6 +32,11 @@ describe('crypto', () => {
 
     it("generate private key from mnemonic", () => {
         const pk = crypto.getPrivateKeyFromMnemonic("fragile duck lunch coyote cotton pole gym orange share muscle impulse mom pause isolate define oblige hungry sound stereo spider style river fun account");
+        const pubKey = crypto.getPublicKeyFromPrivateKey(pk);
+        const pubAddress = crypto.getAddressFromPublicKey(pubKey, prefix);
+        
+        expect(pubAddress).toBe('surprise1ss57e8sa7xnwq030k2ctr775uac9gjzgjccd27');
+        expect(pubKey.toString('hex')).toBe("043c604c2294353a46dd7bf80be23588b89cc4b03c1b93376f05ae7eeda14e92d31c6dcc75a453acbb23112cf777267751ba4cccbdedc528c6368cf766b9e9ee31");
         expect(pk.toString("hex")).toBe("caf2009a04bd53d426fc0907383b3f1dfe13013aee694d0159f6befc3fdccd5f");
     });
 
