@@ -25,7 +25,7 @@ const MNEMONIC_LEN = 256
 const DECODED_ADDRESS_LEN = 20
 const CURVE = "secp256k1"
 
-//hdpath
+//hdpath - https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki#path-levels
 const HDPATH = "44'/714'/0'/0/"
 
 const ec = new EC(CURVE)
