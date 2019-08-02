@@ -70,7 +70,7 @@ export const checkAddress = (address, hrp) => {
  * @param {*} prefix the address prefix
  * @param {*} type the output type (default: hex)
  */
-export const encodeAddress = (value, prefix = "surprise", type = "hex") => {
+export const encodeAddress = (value, prefix = "sand", type = "hex") => {
     const words = bech32.toWords(Buffer.from(value, type))
     return bech32.encode(prefix, words)
 }

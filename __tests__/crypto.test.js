@@ -3,26 +3,26 @@ import * as bip39 from "bip39";
 
 const privateKey = crypto.generatePrivateKey();
 const keyStore = crypto.generateKeyStore(privateKey, "1234567");
-const prefix = 'surprise';
+const prefix = 'sand';
 
 describe('crypto', () => {
     it('generate a random address', () => {
         const privateKey = crypto.generatePrivateKey();
         const address = crypto.getAddressFromPrivateKey(privateKey, prefix);
-        expect(address.length).toBe(47);
+        expect(address.length).toBe(43);
     });
 
     it("generate an address from privateKey", () => {
         const privateKey = "90335b9d2153ad1a9799a3ccc070bd64b4164e9642ee1dd48053c33f9a3a05e9";
         const address = crypto.getAddressFromPrivateKey(privateKey, prefix);
-        expect(address).toBe("surprise1hgm0p7khfk85zpz5v0j8wnej3a90w70906sgzh");
+        expect(address).toBe("sand1hgm0p7khfk85zpz5v0j8wnej3a90w709mqukrg");
     });
 
     it("generate an address from publicKey", () => {
         const privateKey = "90335b9d2153ad1a9799a3ccc070bd64b4164e9642ee1dd48053c33f9a3a05e9";
         const publicKey = crypto.getPublicKeyFromPrivateKey(privateKey);
         const address = crypto.getAddressFromPublicKey(publicKey, prefix);
-        expect(address).toBe("surprise1hgm0p7khfk85zpz5v0j8wnej3a90w70906sgzh");
+        expect(address).toBe("sand1hgm0p7khfk85zpz5v0j8wnej3a90w709mqukrg");
     });
 
     it("generate private key from keyStore", () => {
@@ -35,7 +35,7 @@ describe('crypto', () => {
         const pubKey = crypto.getPublicKeyFromPrivateKey(pk);
         const pubAddress = crypto.getAddressFromPublicKey(pubKey, prefix);
 
-        expect(pubAddress).toBe('surprise1ss57e8sa7xnwq030k2ctr775uac9gjzgjccd27');
+        expect(pubAddress).toBe('sand1ss57e8sa7xnwq030k2ctr775uac9gjzgxz5ntp');
         expect(pubKey.toString('hex')).toBe("043c604c2294353a46dd7bf80be23588b89cc4b03c1b93376f05ae7eeda14e92d31c6dcc75a453acbb23112cf777267751ba4cccbdedc528c6368cf766b9e9ee31");
         expect(pk.toString("hex")).toBe("caf2009a04bd53d426fc0907383b3f1dfe13013aee694d0159f6befc3fdccd5f");
     });
@@ -55,14 +55,14 @@ describe('crypto', () => {
         const mnemonic = "offer caution gift cross surge pretty orange during eye soldier popular holiday mention east eight office fashion ill parrot vault rent devote earth cousin";
         const pk = crypto.getPrivateKeyFromMnemonic(mnemonic);
         const address = crypto.getAddressFromPrivateKey(pk, prefix);
-        expect(address).toBe("surprise1hgm0p7khfk85zpz5v0j8wnej3a90w70906sgzh");
+        expect(address).toBe("sand1hgm0p7khfk85zpz5v0j8wnej3a90w709mqukrg");
     });
 
     it("generate address from mnemonic with index 1", () => {
         const mnemonic = "offer caution gift cross surge pretty orange during eye soldier popular holiday mention east eight office fashion ill parrot vault rent devote earth cousin";
         const pk = crypto.getPrivateKeyFromMnemonic(mnemonic, true, 1);
         const address = crypto.getAddressFromPrivateKey(pk, prefix);
-        expect(address).toBe("surprise1egswqkszzfc2uq78zjslc6u2uky4pw469c94qx");
+        expect(address).toBe("sand1egswqkszzfc2uq78zjslc6u2uky4pw463zftpe");
     });
 
     it("generateSignature", () => {
