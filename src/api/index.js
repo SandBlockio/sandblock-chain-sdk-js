@@ -15,6 +15,12 @@ export class SandblockChainClient {
             baseURL: 'https://api.explorer.sandblock.io/api/v1/',
             timeout: 1000
         });
+        this.axiosConfig = {
+            headers: {
+                'Content-Type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+            }
+        };
     }
 
     setPrivateKey(pk){
@@ -46,6 +52,60 @@ export class SandblockChainClient {
             const data = await this._httpClient.get(`accounts/${address}`);
             return data.data;
         } catch(error){
+            return null;
+        }
+    }
+
+    async getBlockAtHeight(height){
+        try {
+            const data = await this._httpClient.get(`blocks/${height}`);
+            return data.data;
+        } catch(error) {
+            return null;
+        }
+    }
+
+    async getLastFiftyBlocks(){
+        try {
+            const data = await this._httpClient.get(`blocks`);
+            return data.data;
+        } catch(error){
+            return null;
+        }
+    }
+
+    async getLatestBlock(){
+        try {
+            const data = await this._httpClient.get(`blocks/latest`);
+            return data.data;
+        } catch(error){
+            return null;
+        }
+    }
+
+    async getLastFiftyTransactions(){
+        try {
+            const data = await this._httpClient.get(`transactions`);
+            return data.data;
+        } catch(error){
+            return null;
+        }
+    }
+
+    async getTransaction(hash){
+        try {
+            const data = await this._httpClient.get(`transactions/${hash}`);
+            return data.data;
+        } catch(error){
+            return null;
+        }
+    }
+
+    async search(query){
+        try {
+            const data = await this._httpClient.post(`search`, JSON.stringify({data: query}), this.axiosConfig);
+            return data.data;
+        } catch(error) {
             return null;
         }
     }
