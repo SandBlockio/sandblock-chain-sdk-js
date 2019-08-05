@@ -1,2 +1,6 @@
 node_modules/
 .idea/
+.DS_STORE
+
+__tests__/.DS_STORE
+__tests__/wallet.json
