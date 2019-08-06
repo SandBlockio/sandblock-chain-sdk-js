@@ -106,6 +106,7 @@ export class SandblockChainClient {
             const data = await this._httpClient.post(`search`, JSON.stringify({data: query}), this.axiosConfig);
             return data.data;
         } catch(error) {
+            console.error(error.response);
             return null;
         }
     }
