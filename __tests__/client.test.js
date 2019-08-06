@@ -117,4 +117,10 @@ describe('apiclient', () => {
         expect(res.result.type).toBe('block');
         expect(res.result.data).toBeTruthy();
     });
+
+    it('sign a transaction', async () => {
+        const client = bootstrapClient();
+        const res = await client.transfer(client._address, "sand17gt85vkpsal48qed5ej93y43gmxrdqldvp2slu", "surprisecoin", 1);
+        console.log(res.data);
+    });
 });

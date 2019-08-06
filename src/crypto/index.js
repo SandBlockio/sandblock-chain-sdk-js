@@ -9,15 +9,10 @@ import uuid from "uuid"
 import is from "is_js"
 import bip32 from "bip32"
 import * as bip39 from "bip39"
-import { ec as EC } from "elliptic"
+import {ec as EC} from "elliptic"
 import ecc from "tiny-secp256k1"
 
-import {
-    ab2hexstring,
-    sha3,
-    sha256,
-    sha256ripemd160,
-} from "../utils"
+import {ab2hexstring, sha256, sha256ripemd160, sha3,} from "../utils"
 
 // secp256k1 privkey is 32 bytes
 const PRIVKEY_LEN = 32
@@ -157,8 +152,7 @@ export const getAddressFromPrivateKey = (privateKeyHex, prefix) => {
 export const generateSignature = (signBytesHex, privateKey) => {
     const msgHash = sha256(signBytesHex)
     const msgHashHex = Buffer.from(msgHash, "hex")
-    const signature = ecc.sign(msgHashHex, Buffer.from(privateKey, "hex")) // enc ignored if buffer
-    return signature
+    return ecc.sign(msgHashHex, Buffer.from(privateKey, "hex"))
 }
 
 /**
@@ -166,7 +160,7 @@ export const generateSignature = (signBytesHex, privateKey) => {
  * @param {string} sigHex - The signature hexstring.
  * @param {string} signBytesHex - Unsigned transaction sign bytes hexstring.
  * @param {string} publicKeyHex - The public key.
- * @return {Buffer} Signature. Does not include tx.
+ * @return {boolean} Signature. Does not include tx.
  */
 export const verifySignature = (sigHex, signBytesHex, publicKeyHex) => {
     const publicKey = Buffer.from(publicKeyHex, "hex")
