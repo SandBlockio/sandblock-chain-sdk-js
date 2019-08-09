@@ -1,5 +1,7 @@
 node_modules/
 .idea/
+.dist/
+.dist/*
 .DS_STORE
 
 __tests__/.DS_STORE

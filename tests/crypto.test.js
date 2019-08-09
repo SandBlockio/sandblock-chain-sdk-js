@@ -6,7 +6,7 @@ const keyStore = crypto.generateKeyStore(privateKey, "1234567");
 const prefix = 'sand';
 
 describe('crypto', () => {
-    it('generate a random address', () => {
+    /*it('generate a random address', () => {
         const privateKey = crypto.generatePrivateKey();
         const address = crypto.getAddressFromPrivateKey(privateKey, prefix);
         expect(address.length).toBe(43);
@@ -84,5 +84,5 @@ describe('crypto', () => {
         const msg = Buffer.from("{\"account_number\":1,\"data\":\"ABCD\",\"chain_id\":\"sandblockchain\",\"memo\":\"smiley!☺\",\"msgs\":[\"msg\"],\"sequence\":1,\"source\":1}").toString("hex");
         const sig = crypto.generateSignature(msg, privateKey).toString("hex");
         expect(crypto.verifySignature(sig, msg, publicKey)).toBeTruthy();
-    });
+    });*/
 });

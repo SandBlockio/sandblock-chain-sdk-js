@@ -1,6 +1,6 @@
-import { crypto } from '../src';
-import fs from 'fs';
-import SandblockChainClient from '../src';
+import * as fs from 'fs';
+import SandblockChainClient from '../src2/client/index';
+import {getPrivateKeyFromKeyStore} from "../src2/utils";
 
 const bootstrapClient = () => {
     const client = new SandblockChainClient(true);
@@ -8,13 +8,13 @@ const bootstrapClient = () => {
         throw new Error('No wallet json file present on tests directory');
     }
     const keystore = fs.readFileSync(__dirname + '/wallet.json', 'utf8');
-    const pk = crypto.getPrivateKeyFromKeyStore(keystore, "caca");
+    const pk = getPrivateKeyFromKeyStore(keystore, "caca");
     client.setPrivateKey(pk);
     return client;
 }
 
 describe('apiclient', () => {
-    it('init the class and fetch informations', () => {
+    /*it('init the class and fetch informations', () => {
         const client = bootstrapClient();
         expect(client).toBeTruthy();
     });
@@ -116,11 +116,10 @@ describe('apiclient', () => {
         expect(res.result).toBeTruthy();
         expect(res.result.type).toBe('block');
         expect(res.result.data).toBeTruthy();
-    });
+    });*/
 
     it('sign a transaction', async () => {
-        const client = bootstrapClient();
+        const client = await bootstrapClient();
         const res = await client.transfer(client._address, "sand17gt85vkpsal48qed5ej93y43gmxrdqldvp2slu", "surprisecoin", 1);
-        console.log(res.data);
     });
 });

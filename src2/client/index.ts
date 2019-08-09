@@ -1,6 +1,5 @@
-import * as crypto from '../crypto';
-import axios from 'axios';
-import Transaction, {txType} from "./models/Transaction";
+import axios, {AxiosInstance} from 'axios';
+import * as utils from '../utils';
 
 const prefixes = {
     "testnet": "tsand",
@@ -8,7 +7,14 @@ const prefixes = {
 };
 
 
-export class SandblockChainClient {
+export default class SandblockChainClient {
+    private _prefix: string;
+    private _chainId: string;
+    private _apiClient: AxiosInstance;
+    private _cosmosClient: AxiosInstance;
+    private axiosConfig: { headers: { "Access-Control-Allow-Origin": string; "Content-Type": string } };
+    private _keypair: utils.KeyPair;
+    public _address: any;
     constructor(testnet = false){
         this._prefix = (testnet) ? prefixes.testnet : prefixes.mainnet;
         this._chainId = "sandblockchain";
@@ -28,24 +34,24 @@ export class SandblockChainClient {
         };
     }
 
-    setPrivateKey(pk){
+    setPrivateKey(pk: Buffer): boolean{
         try {
-            this._privateKey = pk;
-            this._address = crypto.getAddressFromPrivateKey(pk);
-
+            this._keypair = utils.getKeypairFromPrivateKey(pk);
+            this._address = utils.getAccAddress(this._keypair.publicKey);
             return true;
         } catch(error){
+            console.error(error);
             return false;
         }
     }
 
     createAccount(){
-        const pk = crypto.generatePrivateKey();
+        /*const pk = crypto.generatePrivateKey();
         return {
             privateKey: pk,
             publicKey: crypto.getPublicKeyFromPrivateKey(pk),
             address: crypto.getAddressFromPrivateKey(pk, this._prefix)
-        };
+        };*/
     }
 
     async getAccount(address = this._address){
@@ -128,58 +134,46 @@ export class SandblockChainClient {
         }
     }
 
-    async signTransaction(msg, address, sequence = null, memo = ""){
-        // Start by getting the associated account
-        const data = await this.getAccountLive(address);
-        sequence = data.value.sequence;
-        const account_number = data.value.account_number;
-
-        const options = {
-            account_number: parseInt(account_number),
-            chain_id: this._chainId,
-            memo,
-            msg,
-            sequence: parseInt(sequence),
-            type: msg.type
-        };
-
-        const tx = new Transaction(options);
-        return tx.sign(this._privateKey, msg);
-    }
-
     async broadcastRawTransaction(signed){
         const opts = {
-            data: JSON.stringify({tx: signed, mode: 'block'}),
+            data: signed,
             headers: {
                 "content-type": "text/plain"
             }
         };
-
-        console.log(signed);
-
-        return this._cosmosClient.post(`txs`, null, opts);
-    }
-
-    async broadcastTransaction(signedTx){
-        const signed = signedTx.serialize();
-        return this.broadcastRawTransaction(signed);
+        return await this._cosmosClient.post(`txs`, null, opts);
     }
 
     async transfer(fromAddress, toAddress, asset, amount, memo = "", sequence = null){
         try {
-            const msg = {
-                type: "cosmos-sdk/MsgSend",
-                value: {
-                    from_address: fromAddress,
-                    to_address: toAddress,
-                    amount: [{
-                        denom: asset,
-                        amount: amount.toString()
-                    }]
+            const account = await this.getAccountLive(fromAddress);
+            const msgSend = utils.buildSend([
+                {
+                    "amount": "1",
+                    "denom": "surprisecoin"
                 }
-            }
-            const signedTx = await this.signTransaction(msg, fromAddress, sequence, memo);
-            return await this.broadcastTransaction(signedTx);
+            ], fromAddress, toAddress);
+
+            const stdTx = utils.buildStdTx([msgSend], {
+                "gas": "200000",
+                "amount": [
+                    {
+                        "amount": "1",
+                        "denom": "surprisecoin"
+                    }
+                ]
+            }, memo);
+
+            const txSignature = utils.sign(stdTx.value, this._keypair, {
+                sequence: account.value.sequence,
+                account_number: account.value.account_number,
+                chain_id: this._chainId
+            });
+
+            const signedTx = utils.createSignedTx(stdTx.value, txSignature);
+            const broadcastBody = utils.createBroadcastBody(signedTx, "block");
+            console.log(broadcastBody);
+            return await this.broadcastRawTransaction(broadcastBody);
         } catch(error){
             console.error(error.response.data);
             return null;

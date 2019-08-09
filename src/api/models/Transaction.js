@@ -44,8 +44,11 @@ class Transaction {
     addSignature(pubKey, signature) {
         pubKey = this._serializePubKey(pubKey) // => Buffer
         this.signatures = [{
-            signature: signature.toString('hex'),
-            pub_key: pubKey.toString('hex')
+            pub_key: {
+                type: 'tendermint/PubKeySecp256k1',
+                value: pubKey.toString('base64')
+            },
+            signature: signature.toString('base64')
         }];
         return this
     }
@@ -81,9 +84,9 @@ class Transaction {
                 memo: this.memo
             }
         }
-        console.log(JSON.stringify(stdTx));
-        const bytes = encoder.marshalBinary(stdTx)
-        return bytes.toString("hex")
+        /*const bytes = encoder.marshalBinary(stdTx)
+        return bytes.toString("hex")*/
+        return stdTx;
     }
 
     _serializePubKey(unencodedPubKey) {
