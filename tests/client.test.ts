@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import SandblockChainClient from '../src2/client/index';
 import {getPrivateKeyFromKeyStore} from "../src2/utils";
 
-const bootstrapClient = () => {
+const bootstrapClient: Function = (): SandblockChainClient => {
     const client = new SandblockChainClient(true);
     if(!fs.existsSync(__dirname + '/wallet.json')){
         throw new Error('No wallet json file present on tests directory');
@@ -120,6 +120,6 @@ describe('apiclient', () => {
 
     it('sign a transaction', async () => {
         const client = await bootstrapClient();
-        const res = await client.transfer(client._address, "sand17gt85vkpsal48qed5ej93y43gmxrdqldvp2slu", "surprisecoin", 1);
+        await client.transfer(client._address, "sand17gt85vkpsal48qed5ej93y43gmxrdqldvp2slu", "surprisecoin", 1);
     });
 });

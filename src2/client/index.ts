@@ -9,10 +9,10 @@ const prefixes = {
 
 export default class SandblockChainClient {
     private _prefix: string;
-    private _chainId: string;
+    private readonly _chainId: string;
     private _apiClient: AxiosInstance;
     private _cosmosClient: AxiosInstance;
-    private axiosConfig: { headers: { "Access-Control-Allow-Origin": string; "Content-Type": string } };
+    private readonly axiosConfig: { headers: { "Access-Control-Allow-Origin": string; "Content-Type": string } };
     private _keypair: utils.KeyPair;
     public _address: any;
     constructor(testnet = false){
@@ -34,7 +34,7 @@ export default class SandblockChainClient {
         };
     }
 
-    setPrivateKey(pk: Buffer): boolean{
+    setPrivateKey: Function = (pk: Buffer): boolean => {
         try {
             this._keypair = utils.getKeypairFromPrivateKey(pk);
             this._address = utils.getAccAddress(this._keypair.publicKey);
@@ -45,7 +45,7 @@ export default class SandblockChainClient {
         }
     }
 
-    createAccount(){
+    createAccount: Function = (): void => {
         /*const pk = crypto.generatePrivateKey();
         return {
             privateKey: pk,
@@ -54,7 +54,7 @@ export default class SandblockChainClient {
         };*/
     }
 
-    async getAccount(address = this._address){
+    getAccount: Function = async (address = this._address) => {
         if(!address){
             throw new Error('Address is required');
         }
@@ -67,7 +67,7 @@ export default class SandblockChainClient {
         }
     }
 
-    async getAccountLive(address = this._address){
+    getAccountLive: Function = async (address = this._address) => {
         if(!address){
             throw new Error('Address is required');
         }
@@ -80,7 +80,7 @@ export default class SandblockChainClient {
         }
     }
 
-    async getBlockAtHeight(height){
+    getBlockAtHeight: Function = async (height) => {
         try {
             const data = await this._apiClient.get(`blocks/${height}`);
             return data.data;
@@ -89,7 +89,7 @@ export default class SandblockChainClient {
         }
     }
 
-    async getLastFiftyBlocks(){
+    getLastFiftyBlocks: Function = async () =>{
         try {
             const data = await this._apiClient.get(`blocks`);
             return data.data;
@@ -98,7 +98,7 @@ export default class SandblockChainClient {
         }
     }
 
-    async getLatestBlock(){
+    getLatestBlock: Function = async () => {
         try {
             const data = await this._apiClient.get(`blocks/latest`);
             return data.data;
@@ -107,7 +107,7 @@ export default class SandblockChainClient {
         }
     }
 
-    async getLastFiftyTransactions(){
+    getLastFiftyTransactions: Function = async () => {
         try {
             const data = await this._apiClient.get(`transactions`);
             return data.data;
@@ -116,7 +116,7 @@ export default class SandblockChainClient {
         }
     }
 
-    async getTransaction(hash){
+    getTransaction: Function = async (hash) => {
         try {
             const data = await this._apiClient.get(`transactions/${hash}`);
             return data.data;
@@ -125,7 +125,7 @@ export default class SandblockChainClient {
         }
     }
 
-    async search(query){
+    search: Function = async (query) => {
         try {
             const data = await this._apiClient.post(`search`, JSON.stringify({data: query}), this.axiosConfig);
             return data.data;
@@ -134,23 +134,17 @@ export default class SandblockChainClient {
         }
     }
 
-    async broadcastRawTransaction(signed){
-        const opts = {
-            data: signed,
-            headers: {
-                "content-type": "text/plain"
-            }
-        };
-        return await this._cosmosClient.post(`txs`, null, opts);
+    broadcastRawTransaction: Function = async (signed) => {
+        return await this._cosmosClient.post(`txs`, signed);
     }
 
-    async transfer(fromAddress, toAddress, asset, amount, memo = "", sequence = null){
+    transfer: Function = async (fromAddress, toAddress, asset, amount, memo = "JS Library") => {
         try {
             const account = await this.getAccountLive(fromAddress);
             const msgSend = utils.buildSend([
                 {
-                    "amount": "1",
-                    "denom": "surprisecoin"
+                    "amount": amount.toString(),
+                    "denom": asset
                 }
             ], fromAddress, toAddress);
 
@@ -158,8 +152,8 @@ export default class SandblockChainClient {
                 "gas": "200000",
                 "amount": [
                     {
-                        "amount": "1",
-                        "denom": "surprisecoin"
+                        "amount": "1",//TODO: dynamize
+                        "denom": "surprisecoin"//TODO: dynamize
                     }
                 ]
             }, memo);
@@ -171,11 +165,9 @@ export default class SandblockChainClient {
             });
 
             const signedTx = utils.createSignedTx(stdTx.value, txSignature);
-            const broadcastBody = utils.createBroadcastBody(signedTx, "block");
-            console.log(broadcastBody);
+            const broadcastBody = utils.createBroadcastBody(signedTx, "sync");
             return await this.broadcastRawTransaction(broadcastBody);
         } catch(error){
-            console.error(error.response.data);
             return null;
         }
     }
