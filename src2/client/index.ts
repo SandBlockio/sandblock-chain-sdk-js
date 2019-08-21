@@ -139,7 +139,7 @@ export default class SandblockChainClient {
         return await this._cosmosClient.post(`txs`, signed);
     }
 
-    transfer: Function = async (fromAddress, toAddress, asset, amount, memo = "JS Library") => {
+    transfer: Function = async (fromAddress: string, toAddress: string, asset: string, amount: string, memo = "JS Library") => {
         try {
             const account = await this.getAccountLive(fromAddress);
             const msgSend = utils.buildSend([
@@ -169,6 +169,7 @@ export default class SandblockChainClient {
             const broadcastBody = utils.createBroadcastBody(signedTx, "sync");
             return await this.broadcastRawTransaction(broadcastBody);
         } catch(error){
+            console.error(error);
             return null;
         }
     }

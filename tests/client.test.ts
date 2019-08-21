@@ -122,6 +122,8 @@ describe('apiclient', () => {
 
     it('sign and broadcast a transfer transaction', async () => {
         const client = await bootstrapClient();
-        await client.transfer(client._address, "sand17gt85vkpsal48qed5ej93y43gmxrdqldvp2slu", "surprisecoin", 1);
+        const tx = await client.transfer(client._address.toString(), "sand17gt85vkpsal48qed5ej93y43gmxrdqldvp2slu", "surprisecoin", 1);
+        chai.expect(tx).to.be.ok;
+        chai.expect(tx.data.txhash).to.be.ok;
     });
 });
