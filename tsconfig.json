@@ -15,12 +15,12 @@
     "sourceRoot": "src",
     "outDir": "dist",
     "typeRoots": [
-      "./src2/typings",
+      "./src/typings",
       "./node_modules/@types"
     ]
   },
   "include": [
-    "src2/**/*.ts"
+    "src/**/*.ts"
   ],
   "exclude": [
     "node_modules",

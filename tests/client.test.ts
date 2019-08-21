@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as chai from 'chai';
-import SandblockChainClient from '../src2/client/index';
-import {getPrivateKeyFromKeyStore} from "../src2/utils";
+import SandblockChainClient from '../src/client/index';
+import {getPrivateKeyFromKeyStore} from "../src/utils";
 
 const bootstrapClient: Function = (): SandblockChainClient => {
     const client = new SandblockChainClient(true);
@@ -17,7 +17,7 @@ const bootstrapClient: Function = (): SandblockChainClient => {
 describe('apiclient', () => {
     it('init the class and fetch informations', () => {
         const client = bootstrapClient();
-        chai.expect(client).to.not.be.null;
+        chai.expect(client).to.be.ok;
     });
 
     it('generate an account', () => {

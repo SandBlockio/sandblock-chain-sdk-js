@@ -1,4 +1,4 @@
-import * as utils from '../src2/utils';
+import * as utils from '../src/utils';
 import * as bip39 from "bip39";
 import * as chai from 'chai';
 
