@@ -14,7 +14,7 @@ export default class SandblockChainClient {
     private _cosmosClient: AxiosInstance;
     private readonly axiosConfig: { headers: { "Access-Control-Allow-Origin": string; "Content-Type": string } };
     private _keypair: utils.KeyPair;
-    public _address: any;
+    public _address: Buffer;
     constructor(testnet = false){
         this._prefix = (testnet) ? prefixes.testnet : prefixes.mainnet;
         this._chainId = "sandblockchain";
@@ -45,13 +45,14 @@ export default class SandblockChainClient {
         }
     }
 
-    createAccount: Function = (): void => {
-        /*const pk = crypto.generatePrivateKey();
+    createAccount: Function = (): {} => {
+        const pk = utils.generatePrivateKey();
+        const keypair = utils.getKeypairFromPrivateKey(pk);
         return {
-            privateKey: pk,
-            publicKey: crypto.getPublicKeyFromPrivateKey(pk),
-            address: crypto.getAddressFromPrivateKey(pk, this._prefix)
-        };*/
+            privateKey: keypair.privateKey.toString('hex'),
+            publicKey: keypair.publicKey.toString('hex'),
+            address: utils.getAddressFromPrivateKey(keypair.privateKey, this._prefix).toString()
+        }
     }
 
     getAccount: Function = async (address = this._address) => {

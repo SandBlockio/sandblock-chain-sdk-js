@@ -2,6 +2,8 @@ import {
     KeyPair,
     convertAccAddressToValAddress,
     convertValAddressToAccAddress,
+    decodeAddress,
+    encodeAddress,
     deriveKeypair,
     deriveMasterKey,
     deriveMasterKeySync,
@@ -9,7 +11,12 @@ import {
     getAccAddress,
     getValAddress,
     getKeypairFromPrivateKey,
-    getPrivateKeyFromKeyStore
+    getPrivateKeyFromKeyStore,
+    generatePrivateKey,
+    generateKeyStore,
+    getPublicKeyFromPrivateKey,
+    getAddressFromPublicKey,
+    getAddressFromPrivateKey
 } from './key';
 
 import {
@@ -46,6 +53,8 @@ export {
     KeyPair,
     convertAccAddressToValAddress,
     convertValAddressToAccAddress,
+    decodeAddress,
+    encodeAddress,
     deriveKeypair,
     deriveMasterKey,
     deriveMasterKeySync,
@@ -54,6 +63,11 @@ export {
     getValAddress,
     getKeypairFromPrivateKey,
     getPrivateKeyFromKeyStore,
+    generatePrivateKey,
+    generateKeyStore,
+    getPublicKeyFromPrivateKey,
+    getAddressFromPublicKey,
+    getAddressFromPrivateKey,
     Coin,
     Fee,
     InOut,

@@ -38,9 +38,9 @@ export function prepareSignBytes(jsonTx: any): any {
 }
 
 export interface SignMetaData {
-    sequence: string
-    account_number: string
-    chain_id: string
+    sequence?: string
+    account_number?: string
+    chain_id?: string
 }
 
 /*

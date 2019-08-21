@@ -1,8 +1,10 @@
 import * as HEX from 'crypto-js/enc-hex'
+import * as hexEncoding from 'crypto-js/enc-hex'
 import * as RIPEMD160 from 'crypto-js/ripemd160'
 import * as SHA256 from 'crypto-js/sha256'
 import * as SHA3 from "crypto-js/sha3"
-import * as hexEncoding from "crypto-js/enc-hex"
+import * as csprng from "secure-random"
+import * as uuid from "uuid"
 
 import * as bip32 from 'bip32'
 import * as bip39 from 'bip39'
@@ -13,6 +15,7 @@ import * as secp256k1 from 'secp256k1'
 
 const accPrefix = 'sand'
 const valPrefix = 'sandval'
+const KEY_LEN = 32;
 
 export async function deriveMasterKey(mnemonic: string): Promise<bip32.BIP32Interface> {
     // throws if mnemonic is invalid
@@ -107,9 +110,9 @@ function getAddress(publicKey: Buffer): Buffer {
 }
 
 // NOTE: this only works with a compressed public key (33 bytes)
-export function getAccAddress(publicKey: Buffer): string {
+export function getAccAddress(publicKey: Buffer): Buffer {
     const words = getAddress(publicKey)
-    return bech32.encode(accPrefix, words)
+    return Buffer.from(bech32.encode(accPrefix, words));
 }
 
 // NOTE: this only works with a compressed public key (33 bytes)
@@ -128,8 +131,12 @@ export function convertAccAddressToValAddress(address: string): string {
     return bech32.encode(valPrefix, words)
 }
 
-export function generateMnemonic(): string {
-    return bip39.generateMnemonic(256)
+export function generateMnemonic(): Buffer {
+    return Buffer.from(bip39.generateMnemonic(256));
+}
+
+export function generatePrivateKey(len = KEY_LEN): Buffer {
+    return Buffer.from(csprng(len));
 }
 
 export function sha3(hex) {
@@ -137,4 +144,70 @@ export function sha3(hex) {
     if (hex.length % 2 !== 0) throw new Error(`invalid hex string length: ${hex}`)
     const hexEncoded = hexEncoding.parse(hex)
     return SHA3(hexEncoded).toString()
+}
+
+export function generateKeyStore(privateKey: Buffer, password: string): {} {
+    const salt = cryp.randomBytes(32)
+    const iv = cryp.randomBytes(16)
+    const cipherAlg = "aes-256-ctr"
+
+    const privateKeyHex = privateKey.toString('hex');
+
+    const kdf = "pbkdf2"
+    const kdfparams = {
+        dklen: KEY_LEN,
+        salt: salt.toString("hex"),
+        c: 262144,
+        prf: "hmac-sha256"
+    }
+
+    const derivedKey = cryp.pbkdf2Sync(Buffer.from(password), salt, kdfparams.c, kdfparams.dklen, "sha256")
+    const cipher = cryp.createCipheriv(cipherAlg, derivedKey.slice(0, 32), iv)
+    if (!cipher) {
+        throw new Error("Unsupported cipher")
+    }
+
+    const ciphertext = Buffer.concat([cipher.update(Buffer.from(privateKeyHex, "hex")), cipher.final()])
+    const bufferValue = Buffer.concat([derivedKey.slice(16, 32), Buffer.from(ciphertext.toString('hex'), "hex")])
+
+    return {
+        version: 1,
+        id: uuid.v4({
+            random: cryp.randomBytes(16)
+        }),
+        crypto: {
+            ciphertext: ciphertext.toString("hex"),
+            cipherparams: {
+                iv: iv.toString("hex")
+            },
+            cipher: cipherAlg,
+            kdf,
+            kdfparams: kdfparams,
+            // mac must use sha3 according to web3 secret storage spec
+            mac: sha3(bufferValue.toString("hex"))
+        }
+    }
+}
+
+export function getPublicKeyFromPrivateKey(privateKey: Buffer): Buffer {
+    return getKeypairFromPrivateKey(privateKey).publicKey;
+}
+
+export function decodeAddress(value): Buffer {
+    const decodeAddress = bech32.decode(value);
+    return Buffer.from(bech32.fromWords(decodeAddress.words));
+}
+
+export function encodeAddress(value: string, prefix:string = "sand", type:string = "hex"): Buffer {
+    // @ts-ignore
+    const words = bech32.toWords(Buffer.from(value, type));
+    return Buffer.from(bech32.encode(prefix, words));
+}
+
+export function getAddressFromPublicKey(publicKey: Buffer, prefix: string = accPrefix): Buffer {
+    return getAccAddress(publicKey);
+}
+
+export function getAddressFromPrivateKey(privateKey: Buffer, prefix: string = accPrefix): Buffer {
+    return getAddressFromPublicKey(getKeypairFromPrivateKey(privateKey).publicKey);
 }
