@@ -1,5 +1,3 @@
-import * as SHA256 from 'crypto-js/sha256'
-
 export interface Coin {
     denom: string
     amount: string
@@ -21,30 +19,6 @@ export interface Signature {
         type: string
         value: string
     }
-}
-
-function normalizeDecimal(decimalNumber: string): string {
-    const num = decimalNumber.split('.')
-    let result = decimalNumber
-
-    if (num.length === 1) {
-        result += '000000000000000000'
-    } else {
-        const decimalPart = num[1]
-
-        for (let i = 18; i > decimalPart.length; i -= 1) {
-            result += '0'
-        }
-    }
-
-    return result
-}
-
-export function generateVoteHash(salt: string, price: string, denom: string, voter: string): string {
-    const proof = `${salt}:${normalizeDecimal(price)}:${denom}:${voter}`
-    const hash = SHA256(proof).toString() // hex string
-
-    return hash.slice(0, 40) // 20 prefix bytes
 }
 
 export interface StdTxValue {
@@ -71,57 +45,6 @@ export function buildStdTx(msg: object[], fee: Fee, memo: string): StdTx {
     }
 }
 
-interface MsgPricePrevote {
-    type: string
-    value: {
-        hash: string
-        denom: string
-        feeder: string
-        validator: string
-    }
-}
-
-export function buildPricePrevote(hash: string, denom: string, feeder: string, validator: string): MsgPricePrevote {
-    return {
-        type: 'oracle/MsgPricePrevote',
-        value: {
-            hash,
-            denom,
-            feeder,
-            validator
-        }
-    }
-}
-
-interface MsgPriceVote {
-    type: string
-    value: {
-        price: string
-        salt: string
-        denom: string
-        feeder: string
-        validator: string
-    }
-}
-
-export function buildPriceVote(
-    price: string,
-    salt: string,
-    denom: string,
-    feeder: string,
-    validator: string
-): MsgPriceVote {
-    return {
-        type: 'oracle/MsgPriceVote',
-        value: {
-            price,
-            salt,
-            denom,
-            feeder,
-            validator
-        }
-    }
-}
 interface MsgSend {
     type: string
     value: {
@@ -177,26 +100,6 @@ export function buildMultiSend(inputs: InOut[], outputs: InOut[]): MsgMultiSend 
         value: {
             inputs,
             outputs
-        }
-    }
-}
-
-interface MsgSwap {
-    type: string
-    value: {
-        trader: string
-        offer_coin: Coin
-        ask_denom: string
-    }
-}
-
-export function buildSwap(trader: string, offerCoin: Coin, askDenom: string): MsgSwap {
-    return {
-        type: 'market/MsgSwap',
-        value: {
-            trader,
-            offer_coin: offerCoin,
-            ask_denom: askDenom
         }
     }
 }
