@@ -14,13 +14,13 @@ const bootstrapClient: Function = (): SandblockChainClient => {
     return client;
 }
 
-describe('apiclient', () => {
-    it('init the class and fetch informations', () => {
+describe('client', () => {
+    it('should init the class and fetch information', () => {
         const client = bootstrapClient();
         chai.expect(client).to.be.ok;
     });
 
-    it('generate an account', () => {
+    it('should generate an account', () => {
         const client = bootstrapClient();
         const res = client.createAccount();
         chai.expect(res.address).to.be.ok;
@@ -29,9 +29,10 @@ describe('apiclient', () => {
         chai.expect(res.publicKey).to.be.ok;
     });
 
-    it('fetch balances of the account', async () => {
+    it('should fetch balances of the account', async () => {
         const client = bootstrapClient();
         const accountPayload = await client.getAccount();
+        chai.expect(accountPayload).to.be.ok;
         const account = accountPayload.result;
 
         chai.expect(accountPayload.code).to.be.ok;
@@ -40,7 +41,7 @@ describe('apiclient', () => {
         chai.expect(account.address).to.equal(client._address.toString());
     });
 
-    it('fetch the last fifty blocks', async () => {
+    it('should fetch the last fifty blocks', async () => {
         const client = bootstrapClient();
         const blocks = await client.getLastFiftyBlocks();
 
@@ -51,7 +52,7 @@ describe('apiclient', () => {
         chai.expect(blocks.result[0].id).to.be.ok;
     });
 
-    it('fetch the last block', async () => {
+    it('should fetch the last block', async () => {
         const client = bootstrapClient();
         const block = await client.getLatestBlock();
 
@@ -61,7 +62,7 @@ describe('apiclient', () => {
         chai.expect(block.result.id).to.be.ok;
     });
 
-    it('fetch a block at a given height', async () => {
+    it('should fetch a block at a given height', async () => {
         const client = bootstrapClient();
         const block = await client.getBlockAtHeight(10);
 
@@ -72,7 +73,7 @@ describe('apiclient', () => {
         chai.expect(block.result.height).to.equal(10);
     });
 
-    it('fetch the last fifty transactions', async () => {
+    it('should fetch the last fifty transactions', async () => {
         const client = bootstrapClient();
         const transactions = await client.getLastFiftyTransactions();
 
@@ -92,7 +93,7 @@ describe('apiclient', () => {
         }
     });
 
-    it('search for a transaction', async () => {
+    it('should search for a transaction', async () => {
         const client = bootstrapClient();
         const transactions = await client.getLastFiftyTransactions();
         chai.expect(transactions.code).to.be.ok;
@@ -109,7 +110,7 @@ describe('apiclient', () => {
         chai.expect(res.result.data).to.be.ok;
     });
 
-    it('search for a block', async () => {
+    it('should search for a block', async () => {
         const client = bootstrapClient();
         const res = await client.search('50');
 
@@ -120,10 +121,14 @@ describe('apiclient', () => {
         chai.expect(res.result.data).to.be.ok;
     });
 
-    it('sign and broadcast a transfer transaction', async () => {
+    it('should sign and broadcast a transfer transaction', async () => {
         const client = await bootstrapClient();
         const tx = await client.transfer(client._address.toString(), "sand17gt85vkpsal48qed5ej93y43gmxrdqldvp2slu", "surprisecoin", 1);
+        const data = tx.data;
+
         chai.expect(tx).to.be.ok;
-        chai.expect(tx.data.txhash).to.be.ok;
+        chai.expect(data).to.be.ok;
+        chai.expect(data.raw_log).to.be.not.ok;
+        chai.expect(data.txhash).to.be.ok;
     });
 });

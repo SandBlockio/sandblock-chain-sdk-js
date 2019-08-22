@@ -2,28 +2,28 @@ import * as utils from '../src/utils';
 import * as bip39 from "bip39";
 import * as chai from 'chai';
 
-describe('crypto', () => {
-    it('generate a random address', () => {
+describe('utils', () => {
+    it('should generate a random address', () => {
         const privateKey = utils.generatePrivateKey();
         const kp = utils.getKeypairFromPrivateKey(privateKey);
         const address = utils.getAccAddress(kp.publicKey);
         chai.expect(address).to.be.ok;
     });
 
-    it("generate an address from privateKey", () => {
+    it("should generate an address from privateKey", () => {
         const privateKey = Buffer.from("90335b9d2153ad1a9799a3ccc070bd64b4164e9642ee1dd48053c33f9a3a05e9", "hex");
         const address = utils.getAddressFromPrivateKey(privateKey);
         chai.expect(address.toString()).to.equal("sand1hgm0p7khfk85zpz5v0j8wnej3a90w709mqukrg");
     });
 
-    it("generate an address from publicKey", () => {
+    it("should generate an address from publicKey", () => {
         const privateKey = Buffer.from("90335b9d2153ad1a9799a3ccc070bd64b4164e9642ee1dd48053c33f9a3a05e9", "hex");
         const publicKey = utils.getPublicKeyFromPrivateKey(privateKey);
         const address = utils.getAddressFromPublicKey(publicKey);
         chai.expect(address.toString()).to.equal("sand1hgm0p7khfk85zpz5v0j8wnej3a90w709mqukrg");
     });
 
-    it("generate private key from keyStore", () => {
+    it("should generate private key from keyStore", () => {
         const privateKey = utils.generatePrivateKey();
         const keyStore = utils.generateKeyStore(privateKey, "1234567");
 
@@ -31,7 +31,7 @@ describe('crypto', () => {
         chai.expect(pk.toString('hex')).to.equal(privateKey.toString('hex'));
     });
 
-    it("generate private key from mnemonic", () => {
+    it("should generate private key from mnemonic", () => {
         const mnemonic = utils.generateMnemonic();
         const masterKey = utils.deriveMasterKeySync(mnemonic.toString());
         const keypair = utils.deriveKeypair(masterKey);
@@ -42,18 +42,18 @@ describe('crypto', () => {
         chai.expect(keypair.privateKey.toString('hex')).to.be.ok;
     });
 
-    it("generate mnemonic", ()=>{
+    it("should generate mnemonic", ()=>{
         const mnemonic = utils.generateMnemonic();
         chai.expect(bip39.validateMnemonic(mnemonic.toString())).to.be.ok;
     });
 
-    it("decodeAddress", ()=>{
+    it("should decodeAddress", ()=>{
         let address = "surprise1hgm0p7khfk85zpz5v0j8wnej3a90w70906sgzh";
         const decod = utils.decodeAddress(address);
         chai.expect(decod.toString("hex")).to.equal("ba36f0fad74d8f41045463e4774f328f4af779e5");
     });
 
-    it("generate address from mnemonic", () => {
+    it("should generate address from mnemonic", () => {
         const mnemonic = "offer caution gift cross surge pretty orange during eye soldier popular holiday mention east eight office fashion ill parrot vault rent devote earth cousin";
         const masterKey = utils.deriveMasterKeySync(mnemonic);
         const keypair = utils.deriveKeypair(masterKey);
