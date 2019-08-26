@@ -1,9 +1,9 @@
 {
   "name": "sandblock-chain-sdk-js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/client/index.js",
+  "types": "dist/client/index.d.ts",
   "scripts": {
     "test": "mocha -r ts-node/register tests/**/*.test.ts",
     "build": "tsc --declaration"
