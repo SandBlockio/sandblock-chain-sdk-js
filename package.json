@@ -1,13 +1,16 @@
 {
   "name": "sandblock-chain-sdk-js",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "",
-  "main": "dist/client/index.js",
-  "types": "dist/client/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "test": "mocha -r ts-node/register tests/**/*.test.ts",
     "build": "tsc --declaration"
   },
+  "files": [
+    "dist/*"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/SandBlockio/sandblock-chain-sdk-js.git"
@@ -88,9 +91,6 @@
       "@babel/plugin-transform-runtime"
     ]
   },
-  "files": [
-    "lib/*"
-  ],
   "resolutions": {
     "**/**/handlebars": "^4.1.2",
     "**/**/ecstatic": "^3.3.2",
