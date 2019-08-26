@@ -16,7 +16,8 @@ import {
     generateKeyStore,
     getPublicKeyFromPrivateKey,
     getAddressFromPublicKey,
-    getAddressFromPrivateKey
+    getAddressFromPrivateKey,
+    validateMnemonic
 } from './key';
 
 import {
@@ -64,6 +65,7 @@ export {
     getPublicKeyFromPrivateKey,
     getAddressFromPublicKey,
     getAddressFromPrivateKey,
+    validateMnemonic,
     Coin,
     Fee,
     InOut,

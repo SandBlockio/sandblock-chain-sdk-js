@@ -18,6 +18,7 @@ exports.generateKeyStore = key_1.generateKeyStore;
 exports.getPublicKeyFromPrivateKey = key_1.getPublicKeyFromPrivateKey;
 exports.getAddressFromPublicKey = key_1.getAddressFromPublicKey;
 exports.getAddressFromPrivateKey = key_1.getAddressFromPrivateKey;
+exports.validateMnemonic = key_1.validateMnemonic;
 const msg_1 = require("./msg");
 exports.buildSend = msg_1.buildSend;
 exports.buildStdTx = msg_1.buildStdTx;

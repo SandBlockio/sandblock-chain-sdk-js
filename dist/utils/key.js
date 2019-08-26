@@ -29,6 +29,10 @@ function deriveMasterKeySync(mnemonic) {
     return bip32.fromSeed(seed);
 }
 exports.deriveMasterKeySync = deriveMasterKeySync;
+function validateMnemonic(mnemonic) {
+    return bip39.validateMnemonic(mnemonic);
+}
+exports.validateMnemonic = validateMnemonic;
 function getKeypairFromPrivateKey(privateKey) {
     const publicKey = secp256k1.publicKeyCreate(privateKey, true);
     return {

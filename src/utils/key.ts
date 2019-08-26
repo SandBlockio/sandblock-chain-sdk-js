@@ -33,6 +33,10 @@ export function deriveMasterKeySync(mnemonic: string): bip32.BIP32Interface {
     return bip32.fromSeed(seed)
 }
 
+export function validateMnemonic(mnemonic: string): boolean {
+    return bip39.validateMnemonic(mnemonic);
+}
+
 export interface KeyPair {
     privateKey: Buffer
     publicKey: Buffer

@@ -2,6 +2,7 @@
 import * as bip32 from 'bip32';
 export declare function deriveMasterKey(mnemonic: string): Promise<bip32.BIP32Interface>;
 export declare function deriveMasterKeySync(mnemonic: string): bip32.BIP32Interface;
+export declare function validateMnemonic(mnemonic: string): boolean;
 export interface KeyPair {
     privateKey: Buffer;
     publicKey: Buffer;
