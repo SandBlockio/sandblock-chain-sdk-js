@@ -75,7 +75,7 @@ export default class SandblockChainClient {
 
         try {
             const data = await this._cosmosClient.get(`auth/accounts/${address}`);
-            return data.data;
+            return data.data.result;
         } catch(error){
             return null;
         }
@@ -154,7 +154,7 @@ export default class SandblockChainClient {
                 "amount": [
                     {
                         "amount": "1",//TODO: dynamize
-                        "denom": "surprisecoin"//TODO: dynamize
+                        "denom": "sbc"//TODO: dynamize
                     }
                 ]
             }, memo);

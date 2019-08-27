@@ -10,10 +10,10 @@ export interface KeyPair {
 export declare function getKeypairFromPrivateKey(privateKey: Buffer): KeyPair;
 export declare function getPrivateKeyFromKeyStore(keystore: any, password: string): Buffer;
 export declare function deriveKeypair(masterKey: bip32.BIP32Interface, account?: Number, index?: Number): KeyPair;
-export declare function getAccAddress(publicKey: Buffer): Buffer;
-export declare function getValAddress(publicKey: Buffer): string;
-export declare function convertValAddressToAccAddress(address: string): string;
-export declare function convertAccAddressToValAddress(address: string): string;
+export declare function getAccAddress(publicKey: Buffer, prefix?: string): Buffer;
+export declare function getValAddress(publicKey: Buffer, prefix?: string): string;
+export declare function convertValAddressToAccAddress(address: string, prefix?: string): string;
+export declare function convertAccAddressToValAddress(address: string, prefix?: string): string;
 export declare function generateMnemonic(): Buffer;
 export declare function generatePrivateKey(len?: number): Buffer;
 export declare function sha3(hex: any): any;

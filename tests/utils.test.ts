@@ -48,9 +48,26 @@ describe('utils', () => {
     });
 
     it("should decodeAddress", ()=>{
-        let address = "surprise1hgm0p7khfk85zpz5v0j8wnej3a90w70906sgzh";
+        let address = "sand1z9dwjn0nhs79jk8gmhg278erpkh2pujq86e4qu";
         const decod = utils.decodeAddress(address);
-        chai.expect(decod.toString("hex")).to.equal("ba36f0fad74d8f41045463e4774f328f4af779e5");
+        chai.expect(decod.toString("hex")).to.equal("115ae94df3bc3c5958e8ddd0af1f230daea0f240");
+    });
+
+    it("sould convert validator addresses", () => {
+        const add = "sandvaloper1ahgdmnyh92xfls7pd8fwwkjwsyvfvdv063uee7";
+        const orig = "sand1ahgdmnyh92xfls7pd8fwwkjwsyvfvdv0seelfd";
+        const toAcc = utils.convertValAddressToAccAddress(add).toString();
+        const toVal = utils.convertAccAddressToValAddress(orig).toString()
+        
+        chai.expect(toAcc).to.equal(orig);
+        chai.expect(toVal).to.equal(add);
+    });
+
+    it("should encode a proposer address", () => {
+        const address = "05831E167533ED4083EEA1C22E78123F71F27C87";
+        const consAddr = utils.encodeAddress(address, 'sandvalcons');
+
+        chai.expect(consAddr.toString()).to.equal('sandvalcons1qkp3u9n4x0k5pqlw58pzu7qj8aclyly8hgfnll');
     });
 
     it("should generate address from mnemonic", () => {

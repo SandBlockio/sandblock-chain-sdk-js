@@ -13,8 +13,8 @@ import * as cryp from "crypto-browserify"
 
 import * as secp256k1 from 'secp256k1'
 
-const accPrefix = 'sand'
-const valPrefix = 'sandval'
+const accPrefix = 'sand';
+const valPrefix = accPrefix + 'valoper';
 const KEY_LEN = 32;
 
 export async function deriveMasterKey(mnemonic: string): Promise<bip32.BIP32Interface> {
@@ -107,32 +107,32 @@ function getAddress(publicKey: Buffer): Buffer {
         throw TypeError('parameter must be Buffer that contains public key');
     }
 
-    const message = HEX.parse(publicKey.toString('hex'))
-    const hash = RIPEMD160(SHA256(message)).toString()
-    const address = Buffer.from(hash, 'hex')
-    return bech32.toWords(address)
+    const message = HEX.parse(publicKey.toString('hex'));
+    const hash = RIPEMD160(SHA256(message)).toString();
+    const address = Buffer.from(hash, 'hex');
+    return bech32.toWords(address);
 }
 
 // NOTE: this only works with a compressed public key (33 bytes)
-export function getAccAddress(publicKey: Buffer): Buffer {
-    const words = getAddress(publicKey)
-    return Buffer.from(bech32.encode(accPrefix, words));
+export function getAccAddress(publicKey: Buffer, prefix: string = accPrefix): Buffer {
+    const words = getAddress(publicKey);
+    return Buffer.from(bech32.encode(prefix, words));
 }
 
 // NOTE: this only works with a compressed public key (33 bytes)
-export function getValAddress(publicKey: Buffer): string {
+export function getValAddress(publicKey: Buffer, prefix: string = valPrefix): string {
     const words = getAddress(publicKey)
-    return bech32.encode(valPrefix, words)
+    return bech32.encode(prefix, words)
 }
 
-export function convertValAddressToAccAddress(address: string): string {
+export function convertValAddressToAccAddress(address: string, prefix: string = accPrefix): string {
     const { words } = bech32.decode(address)
-    return bech32.encode(accPrefix, words)
+    return bech32.encode(prefix, words)
 }
 
-export function convertAccAddressToValAddress(address: string): string {
+export function convertAccAddressToValAddress(address: string, prefix: string = valPrefix): string {
     const { words } = bech32.decode(address)
-    return bech32.encode(valPrefix, words)
+    return bech32.encode(prefix, words)
 }
 
 export function generateMnemonic(): Buffer {
@@ -202,16 +202,16 @@ export function decodeAddress(value): Buffer {
     return Buffer.from(bech32.fromWords(decodeAddress.words));
 }
 
-export function encodeAddress(value: string, prefix:string = "sand", type:string = "hex"): Buffer {
+export function encodeAddress(value: string, prefix:string = accPrefix, type:string = "hex"): Buffer {
     // @ts-ignore
     const words = bech32.toWords(Buffer.from(value, type));
     return Buffer.from(bech32.encode(prefix, words));
 }
 
 export function getAddressFromPublicKey(publicKey: Buffer, prefix: string = accPrefix): Buffer {
-    return getAccAddress(publicKey);
+    return getAccAddress(publicKey, prefix);
 }
 
 export function getAddressFromPrivateKey(privateKey: Buffer, prefix: string = accPrefix): Buffer {
-    return getAddressFromPublicKey(getKeypairFromPrivateKey(privateKey).publicKey);
+    return getAddressFromPublicKey(getKeypairFromPrivateKey(privateKey).publicKey, prefix);
 }
