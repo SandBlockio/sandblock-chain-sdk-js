@@ -6,6 +6,9 @@ import * as SHA3 from "crypto-js/sha3"
 import * as csprng from "secure-random"
 import * as uuid from "uuid"
 
+import { sha256 } from 'js-sha256';
+
+
 import * as bip32 from 'bip32'
 import * as bip39 from 'bip39'
 import * as bech32 from 'bech32'
@@ -84,10 +87,11 @@ export function getPrivateKeyFromKeyStore (keystore: any, password: string): Buf
 }
 
 export function deriveKeypair(masterKey: bip32.BIP32Interface, account: Number = 0, index: Number = 0): KeyPair {
-    const hdPathLuna = `m/44'/330'/${account}'/0/${index}`
-    const terraHD = masterKey.derivePath(hdPathLuna)
+    //TODO: Change the 118 as soon as we register our ticker https://github.com/satoshilabs/slips/blob/master/slip-0044.md
+    const hdPathLuna = `m/44'/118'/${account}'/0/${index}`
+    const sandHD = masterKey.derivePath(hdPathLuna)
 
-    const privateKey = terraHD.privateKey
+    const privateKey = sandHD.privateKey
 
     if (!privateKey) {
         throw new Error('Failed to derive key pair')
@@ -214,4 +218,8 @@ export function getAddressFromPublicKey(publicKey: Buffer, prefix: string = accP
 
 export function getAddressFromPrivateKey(privateKey: Buffer, prefix: string = accPrefix): Buffer {
     return getAddressFromPublicKey(getKeypairFromPrivateKey(privateKey).publicKey, prefix);
+}
+
+export function decodeTransactionHash(hash: string): string {
+    return Buffer.from(sha256(Buffer.from(hash, 'base64'))).toString().toUpperCase();
 }

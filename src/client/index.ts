@@ -12,6 +12,7 @@ export default class SandblockChainClient {
     private readonly _chainId: string;
     private _apiClient: AxiosInstance;
     private _cosmosClient: AxiosInstance;
+    private _tendermintClient: AxiosInstance;
     private readonly axiosConfig: { headers: { "Access-Control-Allow-Origin": string; "Content-Type": string } };
     private _keypair: utils.KeyPair;
     public _address: Buffer;
@@ -25,7 +26,11 @@ export default class SandblockChainClient {
         this._cosmosClient = axios.create({
             baseURL: 'https://shore.sandblock.io/cosmos/',
             timeout: 1000,
-        })
+        });
+        this._tendermintClient = axios.create({
+            baseURL: 'https://shore.sandblock.io/tendermint/',
+            timeout: 1000,
+        });
         this.axiosConfig = {
             headers: {
                 'Content-Type': 'application/json;charset=UTF-8',
@@ -81,9 +86,27 @@ export default class SandblockChainClient {
         }
     }
 
+    getBlocksBetween: Function = async (minheight:number, maxheight: number) => {
+        try {
+            const data = await this._tendermintClient.get(`blockchain?minHeight=${minheight}&maxHeight=${maxheight}`);
+            return data.data;
+        } catch(error) {
+            return null;
+        }
+    }
+
     getBlockAtHeight: Function = async (height) => {
         try {
             const data = await this._apiClient.get(`blocks/${height}`);
+            return data.data;
+        } catch(error) {
+            return null;
+        }
+    }
+
+    getBlockAtHeightLive: Function = async (height) => {
+        try {
+            const data = await this._cosmosClient.get(`blocks/${height}`);
             return data.data;
         } catch(error) {
             return null;
@@ -117,9 +140,18 @@ export default class SandblockChainClient {
         }
     }
 
-    getTransaction: Function = async (hash) => {
+    getTransaction: Function = async (hash:string) => {
         try {
             const data = await this._apiClient.get(`transactions/${hash}`);
+            return data.data;
+        } catch(error){
+            return null;
+        }
+    }
+
+    getTransactionLive: Function = async (hash: string) => {
+        try {
+            const data = await this._cosmosClient.get(`txs/${hash}`);
             return data.data;
         } catch(error){
             return null;
@@ -147,6 +179,15 @@ export default class SandblockChainClient {
     getValidator: Function = async (address:string) => {
         try {
             const data = await this._cosmosClient.get(`staking/validators/${address}`);
+            return data.data;
+        } catch(error){
+            return null;
+        }
+    }
+
+    getStatus: Function = async () => {
+        try {
+            const data = await this._tendermintClient.get(`status`);
             return data.data;
         } catch(error){
             return null;

@@ -7,6 +7,7 @@ const SHA256 = require("crypto-js/sha256");
 const SHA3 = require("crypto-js/sha3");
 const csprng = require("secure-random");
 const uuid = require("uuid");
+const js_sha256_1 = require("js-sha256");
 const bip32 = require("bip32");
 const bip39 = require("bip39");
 const bech32 = require("bech32");
@@ -69,9 +70,10 @@ function getPrivateKeyFromKeyStore(keystore, password) {
 }
 exports.getPrivateKeyFromKeyStore = getPrivateKeyFromKeyStore;
 function deriveKeypair(masterKey, account = 0, index = 0) {
-    const hdPathLuna = `m/44'/330'/${account}'/0/${index}`;
-    const terraHD = masterKey.derivePath(hdPathLuna);
-    const privateKey = terraHD.privateKey;
+    //TODO: Change the 118 as soon as we register our ticker https://github.com/satoshilabs/slips/blob/master/slip-0044.md
+    const hdPathLuna = `m/44'/118'/${account}'/0/${index}`;
+    const sandHD = masterKey.derivePath(hdPathLuna);
+    const privateKey = sandHD.privateKey;
     if (!privateKey) {
         throw new Error('Failed to derive key pair');
     }
@@ -192,4 +194,8 @@ function getAddressFromPrivateKey(privateKey, prefix = accPrefix) {
     return getAddressFromPublicKey(getKeypairFromPrivateKey(privateKey).publicKey, prefix);
 }
 exports.getAddressFromPrivateKey = getAddressFromPrivateKey;
+function decodeTransactionHash(hash) {
+    return Buffer.from(js_sha256_1.sha256(Buffer.from(hash, 'base64'))).toString().toUpperCase();
+}
+exports.decodeTransactionHash = decodeTransactionHash;
 //# sourceMappingURL=key.js.map

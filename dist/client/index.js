@@ -52,9 +52,27 @@ class SandblockChainClient {
                 return null;
             }
         };
+        this.getBlocksBetween = async (minheight, maxheight) => {
+            try {
+                const data = await this._tendermintClient.get(`blockchain?minHeight=${minheight}&maxHeight=${maxheight}`);
+                return data.data;
+            }
+            catch (error) {
+                return null;
+            }
+        };
         this.getBlockAtHeight = async (height) => {
             try {
                 const data = await this._apiClient.get(`blocks/${height}`);
+                return data.data;
+            }
+            catch (error) {
+                return null;
+            }
+        };
+        this.getBlockAtHeightLive = async (height) => {
+            try {
+                const data = await this._cosmosClient.get(`blocks/${height}`);
                 return data.data;
             }
             catch (error) {
@@ -91,6 +109,51 @@ class SandblockChainClient {
         this.getTransaction = async (hash) => {
             try {
                 const data = await this._apiClient.get(`transactions/${hash}`);
+                return data.data;
+            }
+            catch (error) {
+                return null;
+            }
+        };
+        this.getTransactionLive = async (hash) => {
+            try {
+                const data = await this._cosmosClient.get(`txs/${hash}`);
+                return data.data;
+            }
+            catch (error) {
+                return null;
+            }
+        };
+        this.getValidatorsSet = async () => {
+            try {
+                const data = await this._cosmosClient.get(`validatorsets/latest`);
+                return data.data;
+            }
+            catch (error) {
+                return null;
+            }
+        };
+        this.getValidators = async () => {
+            try {
+                const data = await this._cosmosClient.get(`staking/validators`);
+                return data.data;
+            }
+            catch (error) {
+                return null;
+            }
+        };
+        this.getValidator = async (address) => {
+            try {
+                const data = await this._cosmosClient.get(`staking/validators/${address}`);
+                return data.data;
+            }
+            catch (error) {
+                return null;
+            }
+        };
+        this.getStatus = async () => {
+            try {
+                const data = await this._tendermintClient.get(`status`);
                 return data.data;
             }
             catch (error) {
@@ -149,6 +212,10 @@ class SandblockChainClient {
         });
         this._cosmosClient = axios_1.default.create({
             baseURL: 'https://shore.sandblock.io/cosmos/',
+            timeout: 1000,
+        });
+        this._tendermintClient = axios_1.default.create({
+            baseURL: 'https://shore.sandblock.io/tendermint/',
             timeout: 1000,
         });
         this.axiosConfig = {

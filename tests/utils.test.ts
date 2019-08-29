@@ -64,7 +64,7 @@ describe('utils', () => {
     });
 
     it("should encode a proposer address", () => {
-        const address = "05831E167533ED4083EEA1C22E78123F71F27C87";
+        let address = "05831E167533ED4083EEA1C22E78123F71F27C87";
         const consAddr = utils.encodeAddress(address, 'sandvalcons');
 
         chai.expect(consAddr.toString()).to.equal('sandvalcons1qkp3u9n4x0k5pqlw58pzu7qj8aclyly8hgfnll');
@@ -75,6 +75,14 @@ describe('utils', () => {
         const masterKey = utils.deriveMasterKeySync(mnemonic);
         const keypair = utils.deriveKeypair(masterKey);
         const address = utils.getAddressFromPrivateKey(keypair.privateKey);
-        chai.expect(address.toString()).to.equal("sand1z9dwjn0nhs79jk8gmhg278erpkh2pujq86e4qu");
+        chai.expect(address.toString()).to.equal("sand18j94qw97ag42lg6uany20gma2y3uwfluhj04mc");
+    });
+
+    it('should decode transaction hash', async () => {
+        const encodedHash = "swEoKBapCjuoo2GaChTt0N3MlyqMn8PBadLnWk6BGJY1jxIUye4IJCSEA2qDUCFEY2MV9F57GIIaCQoDc2JjEgIxMBIEEMCaDBpqCibrWumHIQM9ytfgIIPWQYHSxp5yDzSsyq9xs4IuujEgyN1ka/yZmhJACNOVWFucRrIKjOSpS3MllxoohZ+1BlEPCEQfBbGkNaEsI1fVeLhmo1uqe43l9LXMq5X2S3ZdyU3aswrkNNe6kg==";
+        const hash = "F85D2BE0D637DBF5BE902F01B4DF963299013A0DE601EF6E47814BC726A1DDDF";
+
+        const decoded = utils.decodeTransactionHash(encodedHash);
+        chai.expect(decoded).to.equal(hash);
     });
 });

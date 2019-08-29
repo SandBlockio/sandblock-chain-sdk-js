@@ -4,6 +4,7 @@ export default class SandblockChainClient {
     private readonly _chainId;
     private _apiClient;
     private _cosmosClient;
+    private _tendermintClient;
     private readonly axiosConfig;
     private _keypair;
     _address: Buffer;
@@ -12,11 +13,18 @@ export default class SandblockChainClient {
     createAccount: Function;
     getAccount: Function;
     getAccountLive: Function;
+    getBlocksBetween: Function;
     getBlockAtHeight: Function;
+    getBlockAtHeightLive: Function;
     getLastFiftyBlocks: Function;
     getLatestBlock: Function;
     getLastFiftyTransactions: Function;
     getTransaction: Function;
+    getTransactionLive: Function;
+    getValidatorsSet: Function;
+    getValidators: Function;
+    getValidator: Function;
+    getStatus: Function;
     search: Function;
     broadcastRawTransaction: Function;
     transfer: Function;

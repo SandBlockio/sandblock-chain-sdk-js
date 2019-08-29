@@ -41,6 +41,15 @@ describe('client', () => {
         chai.expect(account.address).to.equal(client._address.toString());
     });
 
+    it('should get the first ten blocks', async () => {
+        const client = bootstrapClient();
+        const blocks = await client.getBlocksBetween(1, 10);
+
+        chai.expect(blocks).to.be.ok;
+        chai.expect(blocks.result).to.be.ok;
+        chai.expect(blocks.result.block_metas.length).to.equal(10);
+    });
+
     it('should fetch the last fifty blocks', async () => {
         const client = bootstrapClient();
         const blocks = await client.getLastFiftyBlocks();
@@ -155,5 +164,12 @@ describe('client', () => {
 
         const validator = await client.getValidator(res.result[0].operator_address);
         chai.expect(validator).to.be.ok;
+    });
+
+    it('should get the tendermint status', async () => {
+        const client = bootstrapClient();
+        const res = await client.getStatus();
+
+        chai.expect(res).to.be.ok;
     });
 });

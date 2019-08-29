@@ -23,3 +23,4 @@ export declare function decodeAddress(value: any): Buffer;
 export declare function encodeAddress(value: string, prefix?: string, type?: string): Buffer;
 export declare function getAddressFromPublicKey(publicKey: Buffer, prefix?: string): Buffer;
 export declare function getAddressFromPrivateKey(privateKey: Buffer, prefix?: string): Buffer;
+export declare function decodeTransactionHash(hash: string): string;

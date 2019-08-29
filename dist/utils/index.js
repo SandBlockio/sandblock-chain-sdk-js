@@ -5,6 +5,7 @@ exports.convertAccAddressToValAddress = key_1.convertAccAddressToValAddress;
 exports.convertValAddressToAccAddress = key_1.convertValAddressToAccAddress;
 exports.decodeAddress = key_1.decodeAddress;
 exports.encodeAddress = key_1.encodeAddress;
+exports.decodeTransactionHash = key_1.decodeTransactionHash;
 exports.deriveKeypair = key_1.deriveKeypair;
 exports.deriveMasterKey = key_1.deriveMasterKey;
 exports.deriveMasterKeySync = key_1.deriveMasterKeySync;
