@@ -126,6 +126,33 @@ export default class SandblockChainClient {
         }
     }
 
+    getValidatorsSet: Function = async () => {
+        try {
+            const data = await this._cosmosClient.get(`validatorsets/latest`);
+            return data.data;
+        } catch(error){
+            return null;
+        }
+    }
+
+    getValidators: Function = async () => {
+        try {
+            const data = await this._cosmosClient.get(`staking/validators`);
+            return data.data;
+        } catch(error){
+            return null;
+        }
+    }
+
+    getValidator: Function = async (address:string) => {
+        try {
+            const data = await this._cosmosClient.get(`staking/validators/${address}`);
+            return data.data;
+        } catch(error){
+            return null;
+        }
+    }
+
     search: Function = async (query) => {
         try {
             const data = await this._apiClient.post(`search`, JSON.stringify({data: query}), this.axiosConfig);

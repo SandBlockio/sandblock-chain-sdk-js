@@ -131,4 +131,29 @@ describe('client', () => {
         chai.expect(data.raw_log).to.be.ok;
         chai.expect(data.txhash).to.be.ok;
     });
+
+    it('should get the validators set', async () => {
+        const client = bootstrapClient();
+        const res = await client.getValidatorsSet();
+
+        chai.expect(res).to.be.ok;
+    });
+
+    it('should get the staking validators', async () => {
+        const client = bootstrapClient();
+        const res = await client.getValidators();
+
+        chai.expect(res).to.be.ok;
+    });
+
+    it('should get a given staking validator', async () => {
+        const client = bootstrapClient();
+        const res = await client.getValidators();
+        chai.expect(res).to.be.ok;
+        chai.expect(res.result).to.be.ok;
+        chai.expect(res.result[0]).to.be.ok;
+
+        const validator = await client.getValidator(res.result[0].operator_address);
+        chai.expect(validator).to.be.ok;
+    });
 });
