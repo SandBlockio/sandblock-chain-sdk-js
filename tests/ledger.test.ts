@@ -55,4 +55,17 @@ describe('ledger', () => {
         chai.expect(response.bech32_address).to.be.ok;
         chai.expect(response.compressed_pk).to.be.ok;
     });
+
+    it('should sign a msg', async () => {
+        const transport = await initTransport();
+        chai.expect(transport).to.be.ok;
+        const app = new SandblockApp(transport);
+
+        const path = [44, 118, 0, 0, 0];
+        const message = '{"account_number":"6571","chain_id":"cosmoshub-2","fee":{"amount":[{"amount":"5000","denom":"uatom"}],"gas":"200000"},"memo":"Delegated with Ledger from union.market","msgs":[{"type":"cosmos-sdk/MsgDelegate","value":{"amount":{"amount":"1000000","denom":"uatom"},"delegator_address":"cosmos102hty0jv2s29lyc4u0tv97z9v298e24t3vwtpl","validator_address":"cosmosvaloper1grgelyng2v6v3t8z87wu3sxgt9m5s03xfytvz7"}}],"sequence":"0"}';
+        const response = await app.sign(path, message);
+        chai.expect(response.return_code).to.equal(0x9000);
+        //@ts-ignore
+        chai.expect(response.signature).to.be.ok;
+    });
 });
