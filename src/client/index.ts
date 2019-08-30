@@ -185,6 +185,15 @@ export default class SandblockChainClient {
         }
     }
 
+    getValidatorDelegations: Function = async (address:string) => {
+        try {
+            const data = await this._cosmosClient.get(`staking/validators/${address}/delegations`);
+            return data.data;
+        } catch(error){
+            return null;
+        }
+    }
+
     getStatus: Function = async () => {
         try {
             const data = await this._tendermintClient.get(`status`);

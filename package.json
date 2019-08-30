@@ -1,11 +1,11 @@
 {
   "name": "sandblock-chain-sdk-js",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "test": "mocha -r ts-node/register tests/**/*.test.ts",
+    "test": "mocha -t 10000 -r ts-node/register tests/**/*.test.ts",
     "build": "tsc --declaration"
   },
   "files": [
@@ -22,9 +22,10 @@
   },
   "homepage": "https://github.com/SandBlockio/sandblock-chain-sdk-js#readme",
   "dependencies": {
-    "@babel/runtime": "^7.4.4",
-    "@ledgerhq/hw-transport-u2f": "^4.63.2",
+    "@babel/runtime": "^7.5.5",
+    "@ledgerhq/hw-transport-u2f": "^4.68.4",
     "@ledgerhq/hw-transport-web-ble": "^4.63.2",
+    "@ledgerhq/hw-transport-webusb": "^4.69.0",
     "@types/chai": "^4.2.0",
     "@types/mocha": "^5.2.7",
     "@types/node": "^12.7.1",
@@ -46,6 +47,7 @@
     "ndjson": "^1.5.0",
     "protocol-buffers-encodings": "^1.1.0",
     "pumpify": "^1.5.1",
+    "regenerator-runtime": "^0.13.3",
     "safe-buffer": "^5.1.2",
     "secp256k1": "^3.7.1",
     "secure-random": "^1.1.2",
@@ -58,7 +60,7 @@
     "websocket-stream": "^5.5.0"
   },
   "optionalDependencies": {
-    "@ledgerhq/hw-transport-node-hid": "^4.63.2"
+    "@ledgerhq/hw-transport-node-hid": "^4.68.4"
   },
   "devDependencies": {
     "@babel/cli": "^7.4.4",

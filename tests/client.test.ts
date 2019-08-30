@@ -79,7 +79,7 @@ describe('client', () => {
         chai.expect(block.code).to.equal(200);
         chai.expect(block.result).to.be.ok;
         chai.expect(block.result.id).to.be.ok;
-        chai.expect(block.result.height).to.equal(10);
+        chai.expect(parseInt(block.result.height)).to.equal(10);
     });
 
     it('should fetch the last fifty transactions', async () => {
@@ -163,6 +163,9 @@ describe('client', () => {
         chai.expect(res.result[0]).to.be.ok;
 
         const validator = await client.getValidator(res.result[0].operator_address);
+        chai.expect(validator).to.be.ok;
+
+        const delegations = await client.getValidatorDelegations(res.result[0].operator_address);
         chai.expect(validator).to.be.ok;
     });
 
