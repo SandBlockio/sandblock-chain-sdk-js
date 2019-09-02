@@ -80,7 +80,7 @@ export default class SandblockChainClient {
 
         try {
             const data = await this._cosmosClient.get(`auth/accounts/${address}`);
-            return data.data.result;
+            return data.data;
         } catch(error){
             return null;
         }
@@ -218,7 +218,7 @@ export default class SandblockChainClient {
 
     transfer: Function = async (fromAddress: string, toAddress: string, asset: string, amount: string, memo = "JS Library") => {
         try {
-            const account = await this.getAccountLive(fromAddress);
+            const account = (await this.getAccountLive(fromAddress)).result;
             const msgSend = utils.buildSend([
                 {
                     "amount": amount.toString(),
