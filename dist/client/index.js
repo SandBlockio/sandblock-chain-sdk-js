@@ -206,7 +206,7 @@ class SandblockChainClient {
                 });
                 const signedTx = utils.createSignedTx(stdTx.value, txSignature);
                 const broadcastBody = utils.createBroadcastBody(signedTx, "sync");
-                return await this.broadcastRawTransaction(broadcastBody);
+                return await this.broadcastRawTransaction(broadcastBody).data;
             }
             catch (error) {
                 console.error(error);

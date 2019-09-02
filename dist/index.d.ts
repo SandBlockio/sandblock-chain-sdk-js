@@ -1,6 +1,6 @@
 import * as utils from './utils';
 import client from './client';
-import SandblockApp from "../src/utils/ledger";
+import SandblockApp from "./utils/ledger";
 declare const _default: {
     utils: typeof utils;
     client: typeof client;
