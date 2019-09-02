@@ -49,7 +49,7 @@ const ERROR_DESCRIPTION = {
     0x6A80: 'Bad key handle',
     0x6B00: 'Invalid P1/P2',
     0x6D00: 'Instruction not supported',
-    0x6E00: 'Cosmos app does not seem to be open',
+    0x6E00: 'Sandblock app does not seem to be open',
     0x6F00: 'Unknown error',
     0x6F01: 'Sign/verify error',
 };

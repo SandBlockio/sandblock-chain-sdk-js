@@ -151,6 +151,15 @@ class SandblockChainClient {
                 return null;
             }
         };
+        this.getValidatorDelegations = async (address) => {
+            try {
+                const data = await this._cosmosClient.get(`staking/validators/${address}/delegations`);
+                return data.data;
+            }
+            catch (error) {
+                return null;
+            }
+        };
         this.getStatus = async () => {
             try {
                 const data = await this._tendermintClient.get(`status`);

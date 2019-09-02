@@ -24,6 +24,7 @@ export default class SandblockChainClient {
     getValidatorsSet: Function;
     getValidators: Function;
     getValidator: Function;
+    getValidatorDelegations: Function;
     getStatus: Function;
     search: Function;
     broadcastRawTransaction: Function;
