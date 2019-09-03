@@ -42,6 +42,8 @@ import {
     SignMetaData,
     createBroadcastBody,
     createSignedTx,
+    createSignMessage,
+    createSignature,
     sign,
     getAminoDecodecTxBytes,
     getTxHash
@@ -85,6 +87,8 @@ export {
     SignMetaData,
     createBroadcastBody,
     createSignedTx,
+    createSignMessage,
+    createSignature,
     sign,
     getAminoDecodecTxBytes,
     getTxHash

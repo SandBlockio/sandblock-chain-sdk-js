@@ -133,12 +133,10 @@ describe('client', () => {
     it('should sign and broadcast a transfer transaction', async () => {
         const client = await bootstrapClient();
         const tx = await client.transfer(client._address.toString(), "sand17gt85vkpsal48qed5ej93y43gmxrdqldvp2slu", "sbc", 1);
-        const data = tx.data;
-
+        
         chai.expect(tx).to.be.ok;
-        chai.expect(data).to.be.ok;
-        chai.expect(data.raw_log).to.be.ok;
-        chai.expect(data.txhash).to.be.ok;
+        chai.expect(tx.raw_log).to.be.ok;
+        chai.expect(tx.txhash).to.be.ok;
     });
 
     it('should get the validators set', async () => {

@@ -9,13 +9,13 @@ const prefixes = {
 
 export default class SandblockChainClient {
     private _prefix: string;
-    private readonly _chainId: string;
+    protected _chainId: string;
     private _apiClient: AxiosInstance;
     private _cosmosClient: AxiosInstance;
     private _tendermintClient: AxiosInstance;
     private readonly axiosConfig: { headers: { "Access-Control-Allow-Origin": string; "Content-Type": string } };
-    private _keypair: utils.KeyPair;
-    public _address: Buffer;
+    protected _keypair: utils.KeyPair;
+    protected _address: Buffer;
     constructor(testnet = false){
         this._prefix = (testnet) ? prefixes.testnet : prefixes.mainnet;
         this._chainId = "sandblockchain";
@@ -45,9 +45,26 @@ export default class SandblockChainClient {
             this._address = utils.getAccAddress(this._keypair.publicKey);
             return true;
         } catch(error){
-            console.error(error);
             return false;
         }
+    }
+
+    setChainID: Function = (id: string): string => {
+        this._chainId = id;
+        return this._chainId;
+    }
+
+    setPublicKey: Function = (pk: Buffer): utils.KeyPair => {
+        if(!this._keypair){
+            this._keypair = {publicKey: Buffer.from(''), privateKey: Buffer.from('')};
+        }
+        this._keypair.publicKey = pk;
+        return this._keypair;
+    }
+
+    setAddress: Function = (address: Buffer): Buffer => {
+        this._address = address;
+        return this._address;
     }
 
     createAccount: Function = (): {} => {
@@ -213,20 +230,23 @@ export default class SandblockChainClient {
     }
 
     broadcastRawTransaction: Function = async (signed) => {
-        return await this._cosmosClient.post(`txs`, signed);
+        try {
+            const data = await this._cosmosClient.post(`txs`, signed);
+            return data.data;
+        } catch(error){
+            return null;
+        }
     }
 
     transfer: Function = async (fromAddress: string, toAddress: string, asset: string, amount: string, memo = "JS Library") => {
         try {
             const account = (await this.getAccountLive(fromAddress)).result;
-            const msgSend = utils.buildSend([
+            const stdTx = utils.buildStdTx([utils.buildSend([
                 {
                     "amount": amount.toString(),
                     "denom": asset
                 }
-            ], fromAddress, toAddress);
-
-            const stdTx = utils.buildStdTx([msgSend], {
+            ], fromAddress, toAddress)], {
                 "gas": "200000",
                 "amount": [
                     {
@@ -244,7 +264,7 @@ export default class SandblockChainClient {
 
             const signedTx = utils.createSignedTx(stdTx.value, txSignature);
             const broadcastBody = utils.createBroadcastBody(signedTx, "sync");
-            return await this.broadcastRawTransaction(broadcastBody).data;
+            return (await this.broadcastRawTransaction(broadcastBody));
         } catch(error){
             console.error(error);
             return null;

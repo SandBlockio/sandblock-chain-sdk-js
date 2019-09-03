@@ -55,7 +55,7 @@ type StdSignMsg struct {
 }
 */
 /* eslint-disable @typescript-eslint/camelcase */
-function createSignMessage(tx: StdTxValue, { sequence, account_number, chain_id }: SignMetaData) {
+export function createSignMessage(tx: StdTxValue, { sequence, account_number, chain_id }: SignMetaData) {
     // sign bytes need amount to be an array
     const fee = {
         amount: tx.fee.amount || [],
@@ -75,13 +75,13 @@ function createSignMessage(tx: StdTxValue, { sequence, account_number, chain_id 
 }
 
 // produces the signature for a message (returns Buffer)
-function signWithPrivateKey(signMessage, privateKey) {
+export function signWithPrivateKey(signMessage, privateKey) {
     const signHash = Buffer.from(CryptoJS.SHA256(signMessage).toString(), `hex`)
     const { signature } = secp256k1.sign(signHash, Buffer.from(privateKey, `hex`))
     return signature
 }
 
-function createSignature(signature: Buffer, publicKey: Buffer): Signature {
+export function createSignature(signature: Buffer, publicKey: Buffer): Signature {
     return {
         signature: signature.toString(`base64`),
         pub_key: {

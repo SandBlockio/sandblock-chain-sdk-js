@@ -1,4 +1,5 @@
 /** ******************************************************************************
+ *  (c) 2019 Sandblock
  *  (c) 2019 ZondaX GmbH
  *  (c) 2016-2017 Ledger
  *
@@ -370,7 +371,7 @@ export default class SandblockApp {
             );
     }
 
-    async sign(path, message) {
+    async sign(path = [44, 118, 0, 0, 0], message) {
         const chunks = signGetChunks(path, message);
         return this.signSendChunk(1, chunks.length, chunks[0])
             .then(
@@ -398,5 +399,20 @@ export default class SandblockApp {
                 },
                 processErrorResponse,
             );
+    }
+
+    async isAppOpen(){
+        const appInfo = await this.appInfo();
+
+        const { appName } = appInfo;
+        if (appName.toLowerCase() !== "sandblock"){
+            return false;
+        }
+
+        return true;
+    }
+
+    versionString({ major, minor, patch }: { major: Number; minor: Number; patch: Number }) {
+        return `${major}.${minor}.${patch}`;
     }
 }
