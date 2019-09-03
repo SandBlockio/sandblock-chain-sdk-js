@@ -1,6 +1,9 @@
 import axios, {AxiosInstance} from 'axios';
 import * as utils from '../utils';
 
+import SandblockApp from "../utils/ledger";
+import { signatureImport } from 'secp256k1';
+
 const prefixes = {
     "testnet": "tsand",
     "mainnet": "sand"
@@ -266,7 +269,66 @@ export default class SandblockChainClient {
             const broadcastBody = utils.createBroadcastBody(signedTx, "sync");
             return (await this.broadcastRawTransaction(broadcastBody));
         } catch(error){
-            console.error(error);
+            return null;
+        }
+    }
+
+    transferUsingLedger: Function = async (transport: any, path = [44, 118, 0, 0, 0], toAddress: string, asset: string, amount: string, memo = "JS Library") => {
+        try {
+
+            /* Init Sandblock Ledger App with transport */
+            const app = new SandblockApp(transport);
+
+            /* Ensure app is open */
+            if(!(await app.isAppOpen())){
+                throw new Error(`Please open Sandblock App `);
+            }
+
+            /* Get public key */
+            const address = await app.publicKey(path);
+
+            /* Generate payload */
+            this.setAddress(utils.getAddressFromPublicKey(address.compressed_pk));
+            this.setPublicKey(address.compressed_pk);
+
+            const fromAddress = this._address.toString();
+            const account = (await this.getAccountLive(fromAddress)).result;
+            if(!account){
+                throw new Error(`Can't fetch the account`);
+            }
+            const stdTx = utils.buildStdTx([utils.buildSend([
+                {
+                    "amount": amount.toString(),
+                    "denom": asset
+                }
+            ], fromAddress, toAddress)], {
+                "gas": "200000",
+                "amount": [
+                    {
+                        "amount": "1",//TODO: dynamize
+                        "denom": "sbc"//TODO: dynamize
+                    }
+                ]
+            }, "Sent using unit test");
+
+            const messageToSign = utils.createSignMessage(stdTx.value, {
+                sequence: account.value.sequence,
+                account_number: account.value.account_number,
+                chain_id: this._chainId
+            });
+
+            /* Sign the message using ledger */
+            const response: any = await app.sign(path, messageToSign);
+            if(response.return_code !== 0x9000){
+                throw new Error(`Can't sign payload`);
+            }
+
+            /* Add the signature on payload */
+            const signature = utils.createSignature(signatureImport(response.signature), this._keypair.publicKey);
+            const signedTx = utils.createSignedTx(stdTx.value, signature);
+            const broadcastBody = utils.createBroadcastBody(signedTx, "sync");
+            return (await this.broadcastRawTransaction(broadcastBody));
+        } catch(error){
             return null;
         }
     }
