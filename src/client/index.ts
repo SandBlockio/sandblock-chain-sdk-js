@@ -330,10 +330,36 @@ export default class SandblockChainClient {
         }
     }
 
-    delegate: Function = async (delegatorAddress: string, validatorAddress: string, asset: string, amount: string, memo: string = "JS Library"): Promise<StdTx> => {
-        return utils.buildStdTx([utils.buildDelegate(delegatorAddress, validatorAddress, {
+    delegate: Function = async (validatorAddress: string, asset: string, amount: number, memo: string = "JS Library"): Promise<StdTx> => {
+        return utils.buildStdTx([utils.buildDelegate(this._address.toString(), validatorAddress, {
             denom: asset,
-            amount: amount
+            amount: amount.toString()
+        })], {
+            gas: "200000",
+            amount: [{
+                amount: "1",
+                denom: "sbc"
+            }]
+        }, memo);
+    }
+
+    redelegate: Function = async (validatorSrcAddress: string, validatorDstAddress: string, asset: string, amount: number, memo:string = "JS Library"): Promise<StdTx> => {
+        return utils.buildStdTx([utils.buildRedelegate(this._address.toString(), validatorSrcAddress, validatorDstAddress, {
+            denom: asset,
+            amount: amount.toString()
+        })], {
+            gas: "200000",
+            amount: [{
+                amount: "1",
+                denom: "sbc"
+            }]
+        }, memo);
+    }
+
+    undelegate: Function = async (validatorAddress: string, asset: string, amount: number, memo: string = "JS Library"): Promise<StdTx> => {
+        return utils.buildStdTx([utils.buildUndelegate(this._address.toString(), validatorAddress, {
+            denom: asset,
+            amount: amount.toString()
         })], {
             gas: "200000",
             amount: [{
@@ -357,6 +383,26 @@ export default class SandblockChainClient {
                     "denom": "sbc"//TODO: dynamize
                 }
             ]
+        }, memo);
+    }
+
+    setWithdrawAddress: Function = async (withdrawAddress: string, memo: string = "JS Library"): Promise<StdTx> => {
+        return utils.buildStdTx([utils.buildSetWithdrawAddress(this._address.toString(), withdrawAddress)], {
+            gas: "200000",
+            amount: [{
+                amount: "1",
+                denom: "sbc"
+            }]
+        }, memo);
+    }
+
+    withdrawReward: Function = async (validatorAddress: string, memo: string = "JS Library"): Promise<StdTx> => {
+        return utils.buildStdTx([utils.buildWithdrawDelegatorReward(this._address.toString(), validatorAddress)], {
+            gas: "200000",
+            amount: [{
+                amount: "1",
+                denom: "sbc"
+            }]
         }, memo);
     }
 }
