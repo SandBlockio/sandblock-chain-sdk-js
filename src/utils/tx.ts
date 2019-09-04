@@ -111,7 +111,6 @@ export function getAminoDecodecTxBytes(tx: StdTx) {
 }
 
 export function getTxHash(txbytes: Uint8Array) {
-
     return CryptoJS.SHA256(byteArrayToWordArray(txbytes)).toString()
 }
 
