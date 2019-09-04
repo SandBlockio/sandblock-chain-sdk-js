@@ -81,26 +81,35 @@ export default class SandblockChainClient {
         }
     }
 
-    getAccount: Function = async (address = this._address) => {
+    getAccount: Function = async (address: Buffer = this._address) => {
         if(!address){
             throw new Error('Address is required');
         }
 
         try {
-            const data = await this._apiClient.get(`accounts/${address}`);
+            const data = await this._apiClient.get(`accounts/${address.toString()}`);
             return data.data;
         } catch(error){
             return null;
         }
     }
 
-    getAccountLive: Function = async (address = this._address) => {
+    getAccountLive: Function = async (address: Buffer = this._address) => {
         if(!address){
             throw new Error('Address is required');
         }
 
         try {
-            const data = await this._cosmosClient.get(`auth/accounts/${address}`);
+            const data = await this._cosmosClient.get(`auth/accounts/${address.toString()}`);
+            return data.data;
+        } catch(error){
+            return null;
+        }
+    }
+
+    getAccountDelegations: Function = async (address: Buffer = this._address) => {
+        try {
+            const data = await this._cosmosClient.get(`staking/delegators/${address.toString()}/delegations`);
             return data.data;
         } catch(error){
             return null;
