@@ -132,7 +132,8 @@ describe('client', () => {
 
     it('should sign and broadcast a transfer transaction', async () => {
         const client = await bootstrapClient();
-        const tx = await client.transfer(client._address.toString(), "sand17gt85vkpsal48qed5ej93y43gmxrdqldvp2slu", "sbc", 1);
+        const payload = await client.transfer("sand17gt85vkpsal48qed5ej93y43gmxrdqldvp2slu", "sbc", 1, "Sent using client");
+        const tx = await client.dispatch(payload);
         
         chai.expect(tx).to.be.ok;
         chai.expect(tx.raw_log).to.be.ok;
@@ -164,7 +165,7 @@ describe('client', () => {
         chai.expect(validator).to.be.ok;
 
         const delegations = await client.getValidatorDelegations(res.result[0].operator_address);
-        chai.expect(validator).to.be.ok;
+        chai.expect(delegations).to.be.ok;
     });
 
     it('should get the tendermint status', async () => {

@@ -1,8 +1,9 @@
 import axios, {AxiosInstance} from 'axios';
 import * as utils from '../utils';
+import {StdTx} from '../utils';
 
 import SandblockApp from "../utils/ledger";
-import { signatureImport } from 'secp256k1';
+import {signatureImport} from 'secp256k1';
 
 const prefixes = {
     "testnet": "tsand",
@@ -241,23 +242,14 @@ export default class SandblockChainClient {
         }
     }
 
-    transfer: Function = async (fromAddress: string, toAddress: string, asset: string, amount: string, memo = "JS Library") => {
+    dispatchTX: Function = async (signedTx) => {
+        const broadcastBody = utils.createBroadcastBody(signedTx, "sync");
+        return (await this.broadcastRawTransaction(broadcastBody));
+    }
+
+    dispatch: Function = async (stdTx: StdTx) => {
         try {
-            const account = (await this.getAccountLive(fromAddress)).result;
-            const stdTx = utils.buildStdTx([utils.buildSend([
-                {
-                    "amount": amount.toString(),
-                    "denom": asset
-                }
-            ], fromAddress, toAddress)], {
-                "gas": "200000",
-                "amount": [
-                    {
-                        "amount": "1",//TODO: dynamize
-                        "denom": "sbc"//TODO: dynamize
-                    }
-                ]
-            }, memo);
+            const account = (await this.getAccountLive(this._address.toString())).result;
 
             const txSignature = utils.sign(stdTx.value, this._keypair, {
                 sequence: account.value.sequence,
@@ -266,16 +258,14 @@ export default class SandblockChainClient {
             });
 
             const signedTx = utils.createSignedTx(stdTx.value, txSignature);
-            const broadcastBody = utils.createBroadcastBody(signedTx, "sync");
-            return (await this.broadcastRawTransaction(broadcastBody));
-        } catch(error){
+            return (await this.dispatchTX(signedTx));
+        }catch(error){
             return null;
         }
     }
 
-    transferUsingLedger: Function = async (transport: any, path = [44, 118, 0, 0, 0], toAddress: string, asset: string, amount: string, memo = "JS Library") => {
+    initLedgerMetas: Function = async(transport: any, path = [44, 118, 0, 0, 0]) => {
         try {
-
             /* Init Sandblock Ledger App with transport */
             const app = new SandblockApp(transport);
 
@@ -291,26 +281,34 @@ export default class SandblockChainClient {
             this.setAddress(utils.getAddressFromPublicKey(address.compressed_pk));
             this.setPublicKey(address.compressed_pk);
 
+            return {address: this._address, keypair: this._keypair};
+
+        } catch(error){
+            return null;
+        }
+    }
+
+    dispatchWithLedger: Function = async(stdTx: StdTx, transport: any, path = [44, 118, 0, 0, 0]) => {
+        try {
+            /* Init Sandblock Ledger App with transport */
+            const app = new SandblockApp(transport);
+
+            /* Ensure app is open */
+            if(!(await app.isAppOpen())){
+                throw new Error(`Please open Sandblock App `);
+            }
+
+            if(!this._address || !this._keypair){
+                throw new Error(`Please init ledger metas using initLedgerMetas method`);
+            }
+
             const fromAddress = this._address.toString();
             const account = (await this.getAccountLive(fromAddress)).result;
             if(!account){
                 throw new Error(`Can't fetch the account`);
             }
-            const stdTx = utils.buildStdTx([utils.buildSend([
-                {
-                    "amount": amount.toString(),
-                    "denom": asset
-                }
-            ], fromAddress, toAddress)], {
-                "gas": "200000",
-                "amount": [
-                    {
-                        "amount": "1",//TODO: dynamize
-                        "denom": "sbc"//TODO: dynamize
-                    }
-                ]
-            }, "Sent using unit test");
 
+            /* Prepare the payload */
             const messageToSign = utils.createSignMessage(stdTx.value, {
                 sequence: account.value.sequence,
                 account_number: account.value.account_number,
@@ -326,10 +324,39 @@ export default class SandblockChainClient {
             /* Add the signature on payload */
             const signature = utils.createSignature(signatureImport(response.signature), this._keypair.publicKey);
             const signedTx = utils.createSignedTx(stdTx.value, signature);
-            const broadcastBody = utils.createBroadcastBody(signedTx, "sync");
-            return (await this.broadcastRawTransaction(broadcastBody));
+            return (await this.dispatchTX(signedTx));
         } catch(error){
             return null;
         }
+    }
+
+    delegate: Function = async (delegatorAddress: string, validatorAddress: string, asset: string, amount: string, memo: string = "JS Library"): Promise<StdTx> => {
+        return utils.buildStdTx([utils.buildDelegate(delegatorAddress, validatorAddress, {
+            denom: asset,
+            amount: amount
+        })], {
+            gas: "200000",
+            amount: [{
+                amount: "1",
+                denom: "sbc"
+            }]
+        }, memo);
+    }
+
+    transfer: Function = async (toAddress: string, asset: string, amount: number, memo = "JS Library"): Promise<StdTx> => {
+        return utils.buildStdTx([utils.buildSend([
+            {
+                "amount": amount.toString(),
+                "denom": asset
+            }
+        ], this._address.toString(), toAddress)], {
+            "gas": "200000",
+            "amount": [
+                {
+                    "amount": "1",//TODO: dynamize
+                    "denom": "sbc"//TODO: dynamize
+                }
+            ]
+        }, memo);
     }
 }

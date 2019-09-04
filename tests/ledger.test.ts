@@ -1,7 +1,5 @@
 import "regenerator-runtime/runtime";
 import * as chai from 'chai';
-import { signatureImport } from 'secp256k1';
-import * as utils from '../src/utils';
 import TransportU2F from '@ledgerhq/hw-transport-u2f';
 import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
 import TransportHid from "@ledgerhq/hw-transport-node-hid";
@@ -80,8 +78,12 @@ describe('ledger', () => {
         const client = bootstrapClient();
         const transport = await initTransport();
         const path = [44, 118, 0, 0, 0];
-        const tx = await client.transferUsingLedger(transport, path, "sand17gt85vkpsal48qed5ej93y43gmxrdqldvp2slu", "sbc", 1);
-        
+
+        await client.initLedgerMetas(transport, path);
+
+        const payload = await client.transfer("sand17gt85vkpsal48qed5ej93y43gmxrdqldvp2slu", "sbc", 1, "Sent using Ledger");
+        const tx = await client.dispatchWithLedger(payload, transport, path);
+
         chai.expect(tx).to.be.ok;
         chai.expect(tx.raw_log).to.be.ok;
         chai.expect(tx.txhash).to.be.ok;
