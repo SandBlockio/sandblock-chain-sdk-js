@@ -114,7 +114,7 @@ interface MsgSetWithdrawAddress {
 
 export function buildSetWithdrawAddress(delegatorAddress: string, withdrawAddress: string): MsgSetWithdrawAddress {
     return {
-        type: 'distribution/MsgModifyWithdrawAddress',
+        type: 'cosmos-sdk/MsgModifyWithdrawAddress',
         value: {
             delegator_address: delegatorAddress,
             withdraw_address: withdrawAddress
@@ -132,7 +132,7 @@ interface MsgWithdrawDelegatorReward {
 
 export function buildWithdrawDelegatorReward(delegatorAddress: string, validatorAddress: string): MsgWithdrawDelegatorReward {
     return {
-        type: 'distribution/MsgWithdrawDelegationReward',
+        type: 'cosmos-sdk/MsgWithdrawDelegationReward',
         value: {
             delegator_address: delegatorAddress,
             validator_address: validatorAddress
@@ -151,7 +151,7 @@ interface MsgDelegate {
 
 export function buildDelegate(delegatorAddress: string, validatorAddress: string, amount: Coin): MsgDelegate {
     return {
-        type: 'staking/MsgDelegate',
+        type: 'cosmos-sdk/MsgDelegate',
         value: {
             delegator_address: delegatorAddress,
             validator_address: validatorAddress,
@@ -172,7 +172,7 @@ interface MsgRedelegate {
 
 export function buildRedelegate(delegatorAddress: string, validatorSrcAddress: string, validatorDstAddress: string, amount: Coin): MsgRedelegate {
     return {
-        type: 'staking/MsgBeginRedelegate',
+        type: 'cosmos-sdk/MsgBeginRedelegate',
         value: {
             delegator_address: delegatorAddress,
             validator_src_address: validatorSrcAddress,
@@ -193,7 +193,7 @@ interface MsgUndelegate {
 
 export function buildUndelegate(delegatorAddress: string, validatorAddress: string, amount: Coin): MsgUndelegate {
     return {
-        type: 'staking/MsgUndelegate',
+        type: 'cosmos-sdk/MsgUndelegate',
         value: {
             delegator_address: delegatorAddress,
             validator_address: validatorAddress,
