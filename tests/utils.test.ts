@@ -85,4 +85,20 @@ describe('utils', () => {
         const decoded = utils.decodeTransactionHash(encodedHash);
         chai.expect(decoded).to.equal(hash);
     });
+
+    it('should generate a private key from mnemonic then get the address and public key', () => {
+        const mnemonic = utils.generateMnemonic();
+        
+        // First we generate with the old way
+        const masterKey = utils.deriveMasterKeySync(mnemonic.toString());
+        const first_keypair = utils.deriveKeypair(masterKey);
+
+        // Then we derivate the private key from the mnemonic
+        const second_private = utils.getPrivateKeyFromMnemonic(mnemonic, true, 0, Buffer.from(''));
+        const second_keypair = utils.getKeypairFromPrivateKey(second_private);
+
+        // We expect all parameters to match
+        chai.expect(first_keypair.publicKey.toString('hex')).to.equal(second_keypair.publicKey.toString('hex'));
+        chai.expect(first_keypair.privateKey.toString('hex')).to.equal(second_keypair.privateKey.toString('hex'));
+    });
 });

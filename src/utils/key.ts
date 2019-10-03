@@ -53,6 +53,22 @@ export function getKeypairFromPrivateKey(privateKey: Buffer): KeyPair {
     }
 }
 
+export function getPrivateKeyFromMnemonic(mnemonic: Buffer, derive:boolean = true, index: number = 0, password: Buffer): Buffer{
+    if (!bip39.validateMnemonic(mnemonic.toString())){
+        throw new Error('wrong mnemonic format');
+    }
+
+    const hdPathLuna = `44'/118'/0'/0/${index}`;
+    const seed = bip39.mnemonicToSeedSync(mnemonic.toString(), password.toString());
+    if(derive){
+        const master = bip32.fromSeed(seed);
+        const child = master.derivePath(hdPathLuna);
+        return child.privateKey;
+    }
+
+    return seed;
+}
+
 export function getPrivateKeyFromKeyStore (keystore: any, password: string): Buffer{
     if(!password || password.length <= 0){
         throw new Error("No password given");

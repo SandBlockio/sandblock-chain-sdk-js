@@ -1,0 +1,46 @@
+/// <reference types="node" />
+import * as utils from '../utils';
+export default class SandblockChainClient {
+    private _prefix;
+    protected _chainId: string;
+    private _apiClient;
+    private _cosmosClient;
+    private _tendermintClient;
+    private readonly axiosConfig;
+    protected _keypair: utils.KeyPair;
+    protected _address: Buffer;
+    constructor(testnet?: boolean);
+    setPrivateKey: Function;
+    setChainID: Function;
+    setPublicKey: Function;
+    setAddress: Function;
+    createAccount: Function;
+    getAccount: Function;
+    getAccountLive: Function;
+    getAccountDelegations: Function;
+    getBlocksBetween: Function;
+    getBlockAtHeight: Function;
+    getBlockAtHeightLive: Function;
+    getLastFiftyBlocks: Function;
+    getLatestBlock: Function;
+    getLastFiftyTransactions: Function;
+    getTransaction: Function;
+    getTransactionLive: Function;
+    getValidatorsSet: Function;
+    getValidators: Function;
+    getValidator: Function;
+    getValidatorDelegations: Function;
+    getStatus: Function;
+    search: Function;
+    broadcastRawTransaction: Function;
+    dispatchTX: Function;
+    dispatch: Function;
+    initLedgerMetas: Function;
+    dispatchWithLedger: Function;
+    delegate: Function;
+    redelegate: Function;
+    undelegate: Function;
+    transfer: Function;
+    setWithdrawAddress: Function;
+    withdrawReward: Function;
+}
