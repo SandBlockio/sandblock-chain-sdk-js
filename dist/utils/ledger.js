@@ -270,7 +270,7 @@ class SandblockApp {
             };
         }, processErrorResponse);
     }
-    async getAddressAndPubKey(path, hrp = 'sand') {
+    async getAddressAndPubKey(path, hrp) {
         const data = Buffer.concat([serializeHRP(hrp), serializePath(path)]);
         return this.transport.send(CLA, INS.GET_ADDR_SECP256K1, 0, 0, data, [0x9000])
             .then((response) => {
@@ -281,18 +281,6 @@ class SandblockApp {
             return {
                 bech32_address: bech32Address,
                 compressed_pk: compressedPk,
-                return_code: returnCode,
-                error_message: errorCodeToString(returnCode),
-            };
-        }, processErrorResponse);
-    }
-    async showAddress(path, hrp = 'sand') {
-        const data = Buffer.concat([serializeHRP(hrp), serializePath(path)]);
-        return this.transport.send(CLA, INS.SHOW_ADDR_SECP256K1, 0, 0, data, [0x9000])
-            .then((response) => {
-            const errorCodeData = response.slice(-2);
-            const returnCode = errorCodeData[0] * 256 + errorCodeData[1];
-            return {
                 return_code: returnCode,
                 error_message: errorCodeToString(returnCode),
             };

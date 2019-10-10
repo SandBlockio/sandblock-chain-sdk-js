@@ -24,8 +24,7 @@ export default class SandblockApp {
     appInfo(): Promise<any>;
     deviceInfo(): Promise<any>;
     publicKey(path: any): Promise<any>;
-    getAddressAndPubKey(path: any, hrp?: string): Promise<any>;
-    showAddress(path: any, hrp?: string): Promise<any>;
+    getAddressAndPubKey(path: any, hrp: any): Promise<any>;
     signSendChunk(chunk_idx: any, chunk_num: any, chunk: any): Promise<any>;
     sign(path: number[] | undefined, message: any): Promise<{
         return_code: any;

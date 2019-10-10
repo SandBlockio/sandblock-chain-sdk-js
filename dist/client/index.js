@@ -5,8 +5,8 @@ const utils = require("../utils");
 const ledger_1 = require("../utils/ledger");
 const secp256k1_1 = require("secp256k1");
 const prefixes = {
-    "testnet": "tsand",
-    "mainnet": "sand"
+    testnet: 'tsand',
+    mainnet: 'sand'
 };
 class SandblockChainClient {
     constructor(testnet = false) {
@@ -158,9 +158,9 @@ class SandblockChainClient {
                 return null;
             }
         };
-        this.getValidators = async () => {
+        this.getValidators = async (status = 'bonded') => {
             try {
-                const data = await this._cosmosClient.get(`staking/validators`);
+                const data = await this._cosmosClient.get(`staking/validators?limit=100000&status=${status}`);
                 return data.data;
             }
             catch (error) {
@@ -213,8 +213,8 @@ class SandblockChainClient {
             }
         };
         this.dispatchTX = async (signedTx) => {
-            const broadcastBody = utils.createBroadcastBody(signedTx, "sync");
-            return (await this.broadcastRawTransaction(broadcastBody));
+            const broadcastBody = utils.createBroadcastBody(signedTx, 'sync');
+            return await this.broadcastRawTransaction(broadcastBody);
         };
         this.dispatch = async (stdTx) => {
             try {
@@ -225,7 +225,7 @@ class SandblockChainClient {
                     chain_id: this._chainId
                 });
                 const signedTx = utils.createSignedTx(stdTx.value, txSignature);
-                return (await this.dispatchTX(signedTx));
+                return await this.dispatchTX(signedTx);
             }
             catch (error) {
                 return null;
@@ -280,100 +280,118 @@ class SandblockChainClient {
                 /* Add the signature on payload */
                 const signature = utils.createSignature(secp256k1_1.signatureImport(response.signature), this._keypair.publicKey);
                 const signedTx = utils.createSignedTx(stdTx.value, signature);
-                return (await this.dispatchTX(signedTx));
+                return await this.dispatchTX(signedTx);
             }
             catch (error) {
                 return null;
             }
         };
-        this.delegate = async (validatorAddress, asset, amount, memo = "JS Library") => {
-            return utils.buildStdTx([utils.buildDelegate(this._address.toString(), validatorAddress, {
+        this.delegate = async (validatorAddress, asset, amount, memo = 'JS Library') => {
+            return utils.buildStdTx([
+                utils.buildDelegate(this._address.toString(), validatorAddress, {
                     denom: asset,
                     amount: amount.toString()
-                })], {
-                gas: "200000",
-                amount: [{
-                        amount: "1",
-                        denom: "sbc"
-                    }]
-            }, memo);
-        };
-        this.redelegate = async (validatorSrcAddress, validatorDstAddress, asset, amount, memo = "JS Library") => {
-            return utils.buildStdTx([utils.buildRedelegate(this._address.toString(), validatorSrcAddress, validatorDstAddress, {
-                    denom: asset,
-                    amount: amount.toString()
-                })], {
-                gas: "200000",
-                amount: [{
-                        amount: "1",
-                        denom: "sbc"
-                    }]
-            }, memo);
-        };
-        this.undelegate = async (validatorAddress, asset, amount, memo = "JS Library") => {
-            return utils.buildStdTx([utils.buildUndelegate(this._address.toString(), validatorAddress, {
-                    denom: asset,
-                    amount: amount.toString()
-                })], {
-                gas: "200000",
-                amount: [{
-                        amount: "1",
-                        denom: "sbc"
-                    }]
-            }, memo);
-        };
-        this.transfer = async (toAddress, asset, amount, memo = "JS Library") => {
-            return utils.buildStdTx([utils.buildSend([
+                })
+            ], {
+                gas: '200000',
+                amount: [
                     {
-                        "amount": amount.toString(),
-                        "denom": asset
-                    }
-                ], this._address.toString(), toAddress)], {
-                "gas": "200000",
-                "amount": [
-                    {
-                        "amount": "1",
-                        "denom": "sbc" //TODO: dynamize
+                        amount: '0',
+                        denom: 'sbc'
                     }
                 ]
             }, memo);
         };
-        this.setWithdrawAddress = async (withdrawAddress, memo = "JS Library") => {
+        this.redelegate = async (validatorSrcAddress, validatorDstAddress, asset, amount, memo = 'JS Library') => {
+            return utils.buildStdTx([
+                utils.buildRedelegate(this._address.toString(), validatorSrcAddress, validatorDstAddress, {
+                    denom: asset,
+                    amount: amount.toString()
+                })
+            ], {
+                gas: '200000',
+                amount: [
+                    {
+                        amount: '1',
+                        denom: 'sbc'
+                    }
+                ]
+            }, memo);
+        };
+        this.undelegate = async (validatorAddress, asset, amount, memo = 'JS Library') => {
+            return utils.buildStdTx([
+                utils.buildUndelegate(this._address.toString(), validatorAddress, {
+                    denom: asset,
+                    amount: amount.toString()
+                })
+            ], {
+                gas: '200000',
+                amount: [
+                    {
+                        amount: '1',
+                        denom: 'sbc'
+                    }
+                ]
+            }, memo);
+        };
+        this.transfer = async (toAddress, asset, amount, memo = 'JS Library') => {
+            return utils.buildStdTx([
+                utils.buildSend([
+                    {
+                        amount: amount.toString(),
+                        denom: asset
+                    }
+                ], this._address.toString(), toAddress)
+            ], {
+                gas: '200000',
+                amount: [
+                    {
+                        amount: '1',
+                        denom: 'sbc' //TODO: dynamize
+                    }
+                ]
+            }, memo);
+        };
+        this.setWithdrawAddress = async (withdrawAddress, memo = 'JS Library') => {
             return utils.buildStdTx([utils.buildSetWithdrawAddress(this._address.toString(), withdrawAddress)], {
-                gas: "200000",
-                amount: [{
-                        amount: "1",
-                        denom: "sbc"
-                    }]
+                gas: '200000',
+                amount: [
+                    {
+                        amount: '1',
+                        denom: 'sbc'
+                    }
+                ]
             }, memo);
         };
-        this.withdrawReward = async (validatorAddress, memo = "JS Library") => {
+        this.withdrawReward = async (validatorAddress, memo = 'JS Library') => {
             return utils.buildStdTx([utils.buildWithdrawDelegatorReward(this._address.toString(), validatorAddress)], {
-                gas: "200000",
-                amount: [{
-                        amount: "1",
-                        denom: "sbc"
-                    }]
+                gas: '200000',
+                amount: [
+                    {
+                        amount: '1',
+                        denom: 'sbc'
+                    }
+                ]
             }, memo);
         };
-        this._prefix = (testnet) ? prefixes.testnet : prefixes.mainnet;
-        this._chainId = "sandblockchain";
+        this._prefix = testnet ? prefixes.testnet : prefixes.mainnet;
+        this._chainId = 'sandblockchain';
         this._apiClient = axios_1.default.create({
             baseURL: 'https://api.explorer.sandblock.io/api/v1/',
             timeout: 1000
         });
         this._cosmosClient = axios_1.default.create({
             baseURL: 'https://shore.sandblock.io/cosmos/',
-            timeout: 1000,
+            timeout: 1000
         });
         this._tendermintClient = axios_1.default.create({
             baseURL: 'https://shore.sandblock.io/tendermint/',
-            timeout: 1000,
+            timeout: 1000
         });
         this.axiosConfig = {
             headers: {
                 'Content-Type': 'application/json;charset=UTF-8',
-                "Access-Control-Allow-Origin": "*",
+                'Access-Control-Allow-Origin': '*'
             }
         };
     }
