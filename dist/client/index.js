@@ -286,55 +286,31 @@ class SandblockChainClient {
                 return null;
             }
         };
-        this.delegate = async (validatorAddress, asset, amount, memo = 'JS Library') => {
+        this.delegate = async (validatorAddress, asset, amount, fee, memo = 'JS Library') => {
             return utils.buildStdTx([
                 utils.buildDelegate(this._address.toString(), validatorAddress, {
                     denom: asset,
                     amount: amount.toString()
                 })
-            ], {
-                gas: '200000',
-                amount: [
-                    {
-                        amount: '0',
-                        denom: 'sbc'
-                    }
-                ]
-            }, memo);
+            ], fee, memo);
         };
-        this.redelegate = async (validatorSrcAddress, validatorDstAddress, asset, amount, memo = 'JS Library') => {
+        this.redelegate = async (validatorSrcAddress, validatorDstAddress, asset, amount, fee, memo = 'JS Library') => {
             return utils.buildStdTx([
                 utils.buildRedelegate(this._address.toString(), validatorSrcAddress, validatorDstAddress, {
                     denom: asset,
                     amount: amount.toString()
                 })
-            ], {
-                gas: '200000',
-                amount: [
-                    {
-                        amount: '1',
-                        denom: 'sbc'
-                    }
-                ]
-            }, memo);
+            ], fee, memo);
         };
-        this.undelegate = async (validatorAddress, asset, amount, memo = 'JS Library') => {
+        this.undelegate = async (validatorAddress, asset, amount, fee, memo = 'JS Library') => {
             return utils.buildStdTx([
                 utils.buildUndelegate(this._address.toString(), validatorAddress, {
                     denom: asset,
                     amount: amount.toString()
                 })
-            ], {
-                gas: '200000',
-                amount: [
-                    {
-                        amount: '1',
-                        denom: 'sbc'
-                    }
-                ]
-            }, memo);
+            ], fee, memo);
         };
-        this.transfer = async (toAddress, asset, amount, memo = 'JS Library') => {
+        this.transfer = async (toAddress, asset, amount, fee, memo = 'JS Library') => {
             return utils.buildStdTx([
                 utils.buildSend([
                     {
@@ -342,37 +318,13 @@ class SandblockChainClient {
                         denom: asset
                     }
                 ], this._address.toString(), toAddress)
-            ], {
-                gas: '200000',
-                amount: [
-                    {
-                        amount: '1',
-                        denom: 'sbc' //TODO: dynamize
-                    }
-                ]
-            }, memo);
+            ], fee, memo);
         };
-        this.setWithdrawAddress = async (withdrawAddress, memo = 'JS Library') => {
-            return utils.buildStdTx([utils.buildSetWithdrawAddress(this._address.toString(), withdrawAddress)], {
-                gas: '200000',
-                amount: [
-                    {
-                        amount: '1',
-                        denom: 'sbc'
-                    }
-                ]
-            }, memo);
+        this.setWithdrawAddress = async (withdrawAddress, fee, memo = 'JS Library') => {
+            return utils.buildStdTx([utils.buildSetWithdrawAddress(this._address.toString(), withdrawAddress)], fee, memo);
         };
-        this.withdrawReward = async (validatorAddress, memo = 'JS Library') => {
-            return utils.buildStdTx([utils.buildWithdrawDelegatorReward(this._address.toString(), validatorAddress)], {
-                gas: '200000',
-                amount: [
-                    {
-                        amount: '1',
-                        denom: 'sbc'
-                    }
-                ]
-            }, memo);
+        this.withdrawReward = async (validatorAddress, fee, memo = 'JS Library') => {
+            return utils.buildStdTx([utils.buildWithdrawDelegatorReward(this._address.toString(), validatorAddress)], fee, memo);
         };
         this._prefix = testnet ? prefixes.testnet : prefixes.mainnet;
         this._chainId = 'sandblockchain';

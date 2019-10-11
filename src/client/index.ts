@@ -223,6 +223,33 @@ export default class SandblockChainClient {
         }
     };
 
+    getValidatorOutstandingRewards: Function = async (address: string) => {
+        try {
+            const data = await this._cosmosClient.get(`distribution/validators/${address}/outstanding_rewards`);
+            return data.data;
+        } catch (error) {
+            return null;
+        }
+    };
+
+    getValidatorRewards: Function = async (address: string) => {
+        try {
+            const data = await this._cosmosClient.get(`distribution/validators/${address}/rewards`);
+            return data.data;
+        } catch (error) {
+            return null;
+        }
+    };
+
+    getAllDelegatorRewards: Function = async (address: string) => {
+        try {
+            const data = await this._cosmosClient.get(`distribution/delegators/${address}/rewards`);
+            return data.data;
+        } catch (error) {
+            return null;
+        }
+    };
+
     getStatus: Function = async () => {
         try {
             const data = await this._tendermintClient.get(`status`);
