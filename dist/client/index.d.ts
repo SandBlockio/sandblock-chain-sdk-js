@@ -34,6 +34,7 @@ export default class SandblockChainClient {
     getValidatorRewards: Function;
     getDelegatorDelegations: Function;
     getAllDelegatorRewards: Function;
+    getDelegatorWithdrawAddress: Function;
     getStatus: Function;
     search: Function;
     broadcastRawTransaction: Function;

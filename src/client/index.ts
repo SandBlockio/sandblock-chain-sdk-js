@@ -259,6 +259,15 @@ export default class SandblockChainClient {
         }
     };
 
+    getDelegatorWithdrawAddress: Function = async (address: string) => {
+        try {
+            const data = await this._cosmosClient.get(`distribution/delegators/${address}/withdraw_address`);
+            return data.data;
+        } catch (error) {
+            return null;
+        }
+    };
+
     getStatus: Function = async () => {
         try {
             const data = await this._tendermintClient.get(`status`);
