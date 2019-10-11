@@ -185,6 +185,33 @@ class SandblockChainClient {
                 return null;
             }
         };
+        this.getValidatorOutstandingRewards = async (address) => {
+            try {
+                const data = await this._cosmosClient.get(`distribution/validators/${address}/outstanding_rewards`);
+                return data.data;
+            }
+            catch (error) {
+                return null;
+            }
+        };
+        this.getValidatorRewards = async (address) => {
+            try {
+                const data = await this._cosmosClient.get(`distribution/validators/${address}/rewards`);
+                return data.data;
+            }
+            catch (error) {
+                return null;
+            }
+        };
+        this.getAllDelegatorRewards = async (address) => {
+            try {
+                const data = await this._cosmosClient.get(`distribution/delegators/${address}/rewards`);
+                return data.data;
+            }
+            catch (error) {
+                return null;
+            }
+        };
         this.getStatus = async () => {
             try {
                 const data = await this._tendermintClient.get(`status`);

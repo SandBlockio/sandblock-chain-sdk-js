@@ -2,31 +2,20 @@
     "compilerOptions": {
         "target": "es2018",
         "module": "commonjs",
-        "moduleResolution": "node",
+        "strict": false,
+        "allowJs": false,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "allowSyntheticDefaultImports": true,
+        "moduleResolution": "node",
+        "skipLibCheck": true,
+        "strictNullChecks": true,
         "sourceMap": true,
-        "noEmit": true,
-        "noEmitHelpers": true,
-        "importHelpers": true,
-        "strictNullChecks": false,
-        "lib": ["dom", "es6"],
-        "baseUrl": "./src",
+        "baseUrl": "src",
+        "sourceRoot": "src",
         "outDir": "dist",
-        "paths": {
-            "@angular/*": ["node_modules/@angular/*"]
-        },
-        "typeRoots": ["node_modules/@types"]
+        "typeRoots": ["./src/typings", "./node_modules/@types"]
     },
-    "exclude": ["node_modules", "dist"],
-    "awesomeTypescriptLoaderOptions": {
-        "forkChecker": true,
-        "useWebpackText": true
-    },
-    "compileOnSave": false,
-    "buildOnSave": false,
-    "atom": {
-        "rewriteTsconfig": false
-    }
+    "include": ["src/**/*.ts"],
+    "exclude": ["node_modules", "dist"]
 }
