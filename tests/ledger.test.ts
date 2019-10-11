@@ -1,44 +1,45 @@
-import "regenerator-runtime/runtime";
+import 'regenerator-runtime/runtime';
 import * as chai from 'chai';
 import TransportU2F from '@ledgerhq/hw-transport-u2f';
 import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
-import TransportHid from "@ledgerhq/hw-transport-node-hid";
-import SandblockApp from "../src/utils/ledger";
-import SandblockChainClient from "../src/client";
+import TransportHid from '@ledgerhq/hw-transport-node-hid';
+import SandblockApp from '../src/utils/ledger';
+import SandblockChainClient from '../src/client';
+import { Fee } from '../src/utils';
 
 let transport = null;
 const initTransport = async () => {
-    if(transport !== null){
+    if (transport !== null) {
         return transport;
     }
-
     try {
-        //@ts-ignore
-        transport = await TransportU2F.create(1000);
-        return transport;
-    } catch(error){}
-    try {
-        if(!transport){
-            transport = await TransportWebUSB.create();
-        }
-    } catch(error){
-    }
-    try {
-        if(!transport){
+        if (!transport) {
             transport = await TransportHid.create();
         }
-    } catch(error){}
+    } catch (error) {}
 
     return transport;
-}
+};
 
 const bootstrapClient: Function = (): SandblockChainClient => {
     const client = new SandblockChainClient(true);
     return client;
-}
+};
+
+const buildStdFee: Function = (): Fee => {
+    return {
+        gas: '20000',
+        amount: [
+            {
+                amount: '1',
+                denom: 'sbc'
+            }
+        ]
+    };
+};
 
 describe('ledger', () => {
-    before(async () =>{
+    before(async () => {
         await initTransport();
     });
     it('should init and get version', async () => {
@@ -81,7 +82,7 @@ describe('ledger', () => {
 
         await client.initLedgerMetas(transport, path);
 
-        const payload = await client.transfer("sand17gt85vkpsal48qed5ej93y43gmxrdqldvp2slu", "sbc", 1, "Sent using Ledger");
+        const payload = await client.transfer('sand17gt85vkpsal48qed5ej93y43gmxrdqldvp2slu', 'sbc', 1, buildStdFee(), 'Sent using Ledger');
         const tx = await client.dispatchWithLedger(payload, transport, path);
 
         chai.expect(tx).to.be.ok;

@@ -1,18 +1,30 @@
 import * as fs from 'fs';
 import * as chai from 'chai';
 import SandblockChainClient from '../src/client/index';
-import {getPrivateKeyFromKeyStore} from "../src/utils";
+import { getPrivateKeyFromKeyStore, Fee } from '../src/utils';
 
 const bootstrapClient: Function = (): SandblockChainClient => {
     const client = new SandblockChainClient(true);
-    if(!fs.existsSync(__dirname + '/wallet.json')){
+    if (!fs.existsSync(__dirname + '/wallet.json')) {
         throw new Error('No wallet json file present on tests directory');
     }
     const keystore = fs.readFileSync(__dirname + '/wallet.json', 'utf8');
-    const pk = getPrivateKeyFromKeyStore(keystore, "caca");
+    const pk = getPrivateKeyFromKeyStore(keystore, 'caca');
     client.setPrivateKey(pk);
     return client;
-}
+};
+
+const buildStdFee: Function = (): Fee => {
+    return {
+        gas: '20000',
+        amount: [
+            {
+                amount: '1',
+                denom: 'sbc'
+            }
+        ]
+    };
+};
 
 describe('client', () => {
     it('should init the class and fetch information', () => {
@@ -91,7 +103,7 @@ describe('client', () => {
         chai.expect(transactions.result).to.be.ok;
         chai.expect(transactions.result[0].id).to.be.ok;
 
-        if(transactions.result.length > 0) {
+        if (transactions.result.length > 0) {
             const transaction = await client.getTransaction(transactions.result[0].hash);
 
             chai.expect(transaction.code).to.be.ok;
@@ -109,7 +121,6 @@ describe('client', () => {
         chai.expect(transactions.code).to.equal(200);
         chai.expect(transactions.result).to.be.ok;
         chai.expect(transactions.result.length).to.be.above(0);
-
 
         const res = await client.search(transactions.result[0].hash);
         chai.expect(res.code).to.be.ok;
@@ -132,9 +143,9 @@ describe('client', () => {
 
     it('should sign and broadcast a transfer transaction', async () => {
         const client = await bootstrapClient();
-        const payload = await client.transfer("sand17gt85vkpsal48qed5ej93y43gmxrdqldvp2slu", "sbc", 1, "Sent using client");
+        const payload = await client.transfer('sand17gt85vkpsal48qed5ej93y43gmxrdqldvp2slu', 'sbc', 1, buildStdFee(), 'Sent using client');
         const tx = await client.dispatch(payload);
-        
+
         chai.expect(tx).to.be.ok;
         chai.expect(tx.raw_log).to.be.ok;
         chai.expect(tx.txhash).to.be.ok;
@@ -173,5 +184,11 @@ describe('client', () => {
         const res = await client.getStatus();
 
         chai.expect(res).to.be.ok;
+    });
+
+    it('should sign and broadcast a delegate transaction', async () => {
+        const client = await bootstrapClient();
+        const payload = await client.delegate('sandvaloper1jakhxnfgh2mh59xaxpm7py4wvadkhe33l8w0pf', 'sbc', 12, buildStdFee(), 'coucou');
+        const tx = await client.dispatch(payload);
     });
 });
