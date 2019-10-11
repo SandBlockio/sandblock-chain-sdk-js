@@ -241,6 +241,15 @@ export default class SandblockChainClient {
         }
     };
 
+    getDelegatorDelegations: Function = async (address: string) => {
+        try {
+            const data = await this._cosmosClient.get(`staking/delegators/${address}/delegations`);
+            return data.data;
+        } catch (error) {
+            return null;
+        }
+    };
+
     getAllDelegatorRewards: Function = async (address: string) => {
         try {
             const data = await this._cosmosClient.get(`distribution/delegators/${address}/rewards`);
