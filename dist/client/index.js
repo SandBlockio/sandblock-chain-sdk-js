@@ -257,11 +257,11 @@ class SandblockChainClient {
                 return null;
             }
         };
-        this.dispatchTX = async (signedTx) => {
-            const broadcastBody = utils.createBroadcastBody(signedTx, 'sync');
+        this.dispatchTX = async (signedTx, mode) => {
+            const broadcastBody = utils.createBroadcastBody(signedTx, mode);
             return await this.broadcastRawTransaction(broadcastBody);
         };
-        this.dispatch = async (stdTx) => {
+        this.dispatch = async (stdTx, mode = 'block') => {
             try {
                 const account = (await this.getAccountLive(this._address.toString())).result;
                 const txSignature = utils.sign(stdTx.value, this._keypair, {
@@ -270,7 +270,7 @@ class SandblockChainClient {
                     chain_id: this._chainId
                 });
                 const signedTx = utils.createSignedTx(stdTx.value, txSignature);
-                return await this.dispatchTX(signedTx);
+                return await this.dispatchTX(signedTx, mode);
             }
             catch (error) {
                 return null;

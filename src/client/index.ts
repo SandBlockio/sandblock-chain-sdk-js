@@ -295,12 +295,12 @@ export default class SandblockChainClient {
         }
     };
 
-    dispatchTX: Function = async signedTx => {
-        const broadcastBody = utils.createBroadcastBody(signedTx, 'sync');
+    dispatchTX: Function = async (signedTx:any, mode: string) => {
+        const broadcastBody = utils.createBroadcastBody(signedTx, mode);
         return await this.broadcastRawTransaction(broadcastBody);
     };
 
-    dispatch: Function = async (stdTx: StdTx) => {
+    dispatch: Function = async (stdTx: StdTx, mode: string = 'block') => {
         try {
             const account = (await this.getAccountLive(this._address.toString())).result;
 
@@ -311,7 +311,7 @@ export default class SandblockChainClient {
             });
 
             const signedTx = utils.createSignedTx(stdTx.value, txSignature);
-            return await this.dispatchTX(signedTx);
+            return await this.dispatchTX(signedTx, mode);
         } catch (error) {
             return null;
         }
