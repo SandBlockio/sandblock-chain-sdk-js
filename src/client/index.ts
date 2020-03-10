@@ -361,11 +361,12 @@ export default class SandblockChainClient {
             }
 
             /* Prepare the payload */
-            const messageToSign = utils.createSignMessage(stdTx.value, {
+            const metadata = {
                 sequence: account.value.sequence,
                 account_number: account.value.account_number,
                 chain_id: this._chainId
-            });
+            };
+            const messageToSign = utils.createSignMessage(stdTx.value, metadata);
 
             /* Sign the message using ledger */
             const response: any = await app.sign(path, messageToSign);
@@ -374,7 +375,7 @@ export default class SandblockChainClient {
             }
 
             /* Add the signature on payload */
-            const signature = utils.createSignature(signatureImport(response.signature), this._keypair.publicKey);
+            const signature = utils.createSignature(signatureImport(response.signature), this._keypair.publicKey, metadata);
             const signedTx = utils.createSignedTx(stdTx.value, signature);
             return await this.dispatchTX(signedTx);
         } catch (error) {

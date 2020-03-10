@@ -38,9 +38,9 @@ export function prepareSignBytes(jsonTx: any): any {
 }
 
 export interface SignMetaData {
-    sequence?: string
-    account_number?: string
-    chain_id?: string
+    sequence: string
+    account_number: string
+    chain_id: string
 }
 
 /*
@@ -61,17 +61,18 @@ export function createSignMessage(tx: StdTxValue, { sequence, account_number, ch
         amount: tx.fee.amount || [],
         gas: tx.fee.gas
     }
-
-    return JSON.stringify(
+    const payload = JSON.stringify(
         prepareSignBytes({
             fee,
             memo: tx.memo,
             msgs: tx.msg, // weird msg vs. msgs
-            sequence,
-            account_number,
+            sequence: String(sequence),
+            account_number: String(account_number),
             chain_id
         })
-    )
+    );
+    return payload;
+
 }
 
 // produces the signature for a message (returns Buffer)
@@ -81,13 +82,16 @@ export function signWithPrivateKey(signMessage, privateKey) {
     return signature
 }
 
-export function createSignature(signature: Buffer, publicKey: Buffer): Signature {
+export function createSignature(signature: Buffer, publicKey: Buffer, requestMetaData: SignMetaData): Signature {
     return {
         signature: signature.toString(`base64`),
         pub_key: {
             type: `tendermint/PubKeySecp256k1`, // TODO: allow other keytypes
             value: publicKey.toString(`base64`)
-        }
+        },
+        account_number: String(requestMetaData.account_number),
+        sequence: String(requestMetaData.sequence),
+        chain_id: requestMetaData.chain_id
     }
 }
 
@@ -96,7 +100,7 @@ export function createSignature(signature: Buffer, publicKey: Buffer): Signature
 export function sign(jsonTx: any, keyPair: KeyPair, requestMetaData: SignMetaData): Signature {
     const signMessage = createSignMessage(jsonTx, requestMetaData)
     const signatureBuffer = signWithPrivateKey(signMessage, keyPair.privateKey)
-    return createSignature(signatureBuffer, keyPair.publicKey)
+    return createSignature(signatureBuffer, keyPair.publicKey, requestMetaData)
 }
 
 // adds the signature object to the tx

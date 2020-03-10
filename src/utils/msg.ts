@@ -18,7 +18,10 @@ export interface Signature {
     pub_key: {
         type: string
         value: string
-    }
+    },
+    account_number: string;
+    sequence: string;
+    chain_id: string;
 }
 
 export interface StdTxValue {
