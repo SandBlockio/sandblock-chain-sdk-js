@@ -16,6 +16,9 @@ export interface Signature {
         type: string;
         value: string;
     };
+    account_number: string;
+    sequence: string;
+    chain_id: string;
 }
 export interface StdTxValue {
     fee: Fee;

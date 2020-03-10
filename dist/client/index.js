@@ -312,18 +312,19 @@ class SandblockChainClient {
                     throw new Error(`Can't fetch the account`);
                 }
                 /* Prepare the payload */
-                const messageToSign = utils.createSignMessage(stdTx.value, {
+                const metadata = {
                     sequence: account.value.sequence,
                     account_number: account.value.account_number,
                     chain_id: this._chainId
-                });
+                };
+                const messageToSign = utils.createSignMessage(stdTx.value, metadata);
                 /* Sign the message using ledger */
                 const response = await app.sign(path, messageToSign);
                 if (response.return_code !== 0x9000) {
                     throw new Error(`Can't sign payload`);
                 }
                 /* Add the signature on payload */
-                const signature = utils.createSignature(secp256k1_1.signatureImport(response.signature), this._keypair.publicKey);
+                const signature = utils.createSignature(secp256k1_1.signatureImport(response.signature), this._keypair.publicKey, metadata);
                 const signedTx = utils.createSignedTx(stdTx.value, signature);
                 return await this.dispatchTX(signedTx);
             }

@@ -49,14 +49,15 @@ function createSignMessage(tx, { sequence, account_number, chain_id }) {
         amount: tx.fee.amount || [],
         gas: tx.fee.gas
     };
-    return JSON.stringify(prepareSignBytes({
+    const payload = JSON.stringify(prepareSignBytes({
         fee,
         memo: tx.memo,
         msgs: tx.msg,
-        sequence,
-        account_number,
+        sequence: String(sequence),
+        account_number: String(account_number),
         chain_id
     }));
+    return payload;
 }
 exports.createSignMessage = createSignMessage;
 // produces the signature for a message (returns Buffer)
@@ -66,13 +67,16 @@ function signWithPrivateKey(signMessage, privateKey) {
     return signature;
 }
 exports.signWithPrivateKey = signWithPrivateKey;
-function createSignature(signature, publicKey) {
+function createSignature(signature, publicKey, requestMetaData) {
     return {
         signature: signature.toString(`base64`),
         pub_key: {
             type: `tendermint/PubKeySecp256k1`,
             value: publicKey.toString(`base64`)
-        }
+        },
+        account_number: String(requestMetaData.account_number),
+        sequence: String(requestMetaData.sequence),
+        chain_id: requestMetaData.chain_id
     };
 }
 exports.createSignature = createSignature;
@@ -81,7 +85,7 @@ exports.createSignature = createSignature;
 function sign(jsonTx, keyPair, requestMetaData) {
     const signMessage = createSignMessage(jsonTx, requestMetaData);
     const signatureBuffer = signWithPrivateKey(signMessage, keyPair.privateKey);
-    return createSignature(signatureBuffer, keyPair.publicKey);
+    return createSignature(signatureBuffer, keyPair.publicKey, requestMetaData);
 }
 exports.sign = sign;
 // adds the signature object to the tx
