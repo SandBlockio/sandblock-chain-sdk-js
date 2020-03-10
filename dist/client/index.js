@@ -49,7 +49,7 @@ class SandblockChainClient {
                 throw new Error('Address is required');
             }
             try {
-                const data = await this._apiClient.get(`accounts/${address.toString()}`);
+                const data = await this._cosmosClient.get(`accounts/${address.toString()}`);
                 return data.data;
             }
             catch (error) {
@@ -88,7 +88,7 @@ class SandblockChainClient {
         };
         this.getBlockAtHeight = async (height) => {
             try {
-                const data = await this._apiClient.get(`blocks/${height}`);
+                const data = await this._cosmosClient.get(`blocks/${height}`);
                 return data.data;
             }
             catch (error) {
@@ -374,15 +374,15 @@ class SandblockChainClient {
         this._prefix = testnet ? prefixes.testnet : prefixes.mainnet;
         this._chainId = 'sandblockchain';
         this._apiClient = axios_1.default.create({
-            baseURL: 'https://api.explorer.sandblock.io/api/v1/',
+            baseURL: 'http://api.explorer.sandblock.io/api/v1/',
             timeout: 1000
         });
         this._cosmosClient = axios_1.default.create({
-            baseURL: 'https://shore.sandblock.io/cosmos/',
+            baseURL: 'http://shore.sandblock.io/cosmos/',
             timeout: 1000
         });
         this._tendermintClient = axios_1.default.create({
-            baseURL: 'https://shore.sandblock.io/tendermint/',
+            baseURL: 'http://shore.sandblock.io/tendermint/',
             timeout: 1000
         });
         this.axiosConfig = {
