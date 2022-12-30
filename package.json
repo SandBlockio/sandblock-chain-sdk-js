@@ -44,7 +44,7 @@
     "is_js": "^0.9.0",
     "js-amino": "^1.0.0",
     "js-sha256": "^0.9.0",
-    "mocha": "^6.2.0",
+    "mocha": "^10.2.0",
     "ndjson": "^1.5.0",
     "protocol-buffers-encodings": "^1.1.0",
     "pumpify": "^1.5.1",
